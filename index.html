@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+		<meta charset="utf-8">
+		<html>
+		<head>
+		<link rel="stylesheet" type="text/css" href="index.css">
+		<title>simplebrainz.org</title>
+		</head>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<script src="./src/d3sparql/d3sparql.js"></script>
+		<script src="./test.js"></script>>
+		<script>
+		///*
+			//d3.select("body").append("p").text("Get the links");
+			var outputJSON; //global variable
+			function onclickSearch(){
+				var endpoint ="http://localhost:8890/sparql";
+
+				var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
+				//var endpoint = "http://dbpedia.org/sparql";
+				//var query = "SELECT * WHERE{ ?a ?b ?c} LIMIT 100";
+
+				var url = endpoint + "?query=" + encodeURIComponent(query);
+				var format = "application/sparql-results+json";
+				//var format = "application/json";	
+				d3.xhr(url, format, function(request) {
+	    		outputJSON = JSON.parse(request.responseText);
+	  		})
+			}
+
+			//var endpoint = "http://dbpedia.org/sparql";
+			//var query = "SELECT * WHERE{ ?a ?b ?c} LIMIT 10";
+
+			/*
+			var format = "application/sparql-results+json";
+			var params={"default-graph": "", "query": query,"debug": "on", "format": format,"save": "display"};
+
+			var querypart="";
+			for(var k in params) {
+				querypart+=k+"="+encodeURIComponent(params[k])+"&";
+			}
+		
+			var queryUrl = endpoint + '?' + querypart;
+			*/
+
+			var config = {
+	        "charge": -500,
+	        "distance": 50,
+	        "width": 1000,
+	        "height": 750,
+	        "selector": "#result"
+	      };
+
+	    function render(json) {
+	      var config = {
+	        "charge": -500,
+	        "distance": 50,
+	        "width": 1000,
+	        "height": 750,
+	        "selector": "#result"
+	      }
+	      d3sparql.forcegraph(json, config)
+	    }
+
+	    function toggle(){
+	    	d3sparql.toggle();
+	    }
+		</script>
+
+  <body>
+    <div id="query" style="margin: 10px">
+      <h1>Simplebrainz Browser</h1>
+      <form class="form-inline">
+        <label>SPARQL:</label>
+        <div class="input-append">
+          <!--<input id="endpoint" <col>ass="span5" value="" type="text">-->
+          <button class="btn" type="button" onclick="onclickSearch()">Query</button>
+          <button class="btn" type="button" onclick="toggle()"><i id="button" class="icon-chevron-up"></i></button>
+          <textarea></textarea>
+        </div>
+      </form>
+    </div>
+    <div id="result"></div>
+  </body>
+</html>
