@@ -13,8 +13,8 @@
 			//d3.select("body").append("p").text("Get the links");
 			var outputJSON; //global variable
 			var config = {
-	        "charge": -500,
-	        "distance": 50,
+	        "charge": -300,
+	        "distance": 150,
 	        "width": 1000,
 	        "height": 750,
 	        "selector": "#result"
@@ -24,8 +24,8 @@
 				//var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
 				var endpoint = "https://dbpedia.org/sparql";
-				//var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
-				var query = "PREFIX rank:<http://www.ontotext.com/owlim/RDFRank#> SELECT ?n WHERE {?n rank:hasRDFRank ?r } ORDER BY DESC(?r) LIMIT 100";
+				var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
+				//var query = "PREFIX rank:<http://www.ontotext.com/owlim/RDFRank#> SELECT ?n WHERE {?n rank:hasRDFRank ?r } ORDER BY DESC(?r) LIMIT 100";
 				var url = endpoint + "?query=" + encodeURIComponent(query);
 				var format = "application/sparql-results+json";
 				//var format = "application/json";	
