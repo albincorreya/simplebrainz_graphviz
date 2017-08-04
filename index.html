@@ -24,7 +24,7 @@
 				//var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
 				var endpoint = "https://dbpedia.org/sparql";
-				var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 100";
+				var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 5000";
 
 				var url = endpoint + "?query=" + encodeURIComponent(query);
 				var format = "application/sparql-results+json";
