@@ -31,6 +31,7 @@
 				//var format = "application/json";	
 				d3.xhr(url, format, function(request) {
 	    		outputJSON = JSON.parse(request.responseText);
+					window.alert("Successful request!");
 	  		})
 			}
 			
