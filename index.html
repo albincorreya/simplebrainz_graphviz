@@ -19,6 +19,7 @@
 	        "height": 750,
 	        "selector": "#result"
 	      };
+			
 			function onclickSearch(){
 				//var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
@@ -31,7 +32,6 @@
 				d3.xhr(url, format, function(request) {
 	    		outputJSON = JSON.parse(request.responseText);
 	  		})
-				sampleGraph();
 			}
 			
 			//var endpoint = "http://dbpedia.org/sparql";
@@ -48,22 +48,6 @@
 		
 			var queryUrl = endpoint + '?' + querypart;
 			*/
-
-
-	    function render(json) {
-	      var config = {
-	        "charge": -500,
-	        "distance": 50,
-	        "width": 1000,
-	        "height": 750,
-	        "selector": "#result"
-	      }
-	      d3sparql.forcegraph(json, config)
-	    }
-
-	    function toggle(){
-	    	d3sparql.toggle();
-	    }
 			function sampleGraph(){d3sparql.forcegraph(outputJSON,config);};
 			
 		</script>
@@ -76,6 +60,7 @@
         <div class="input-append">
           <!--<input id="endpoint" <col>ass="span5" value="" type="text">-->
           <button class="btn" type="button" onclick="onclickSearch()">Query</button>
+		<button class="btn" type="button" onclick="sampleGraph()">Get sample</button>
           <button class="btn" type="button" onclick="toggle()"><i id="button" class="icon-chevron-up"></i></button>
           <textarea></textarea>
         </div>
