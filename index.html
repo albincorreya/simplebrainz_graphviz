@@ -16,7 +16,7 @@
 				//var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
 				var endpoint = "https://dbpedia.org/sparql";
-				var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 10";
+				var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 100";
 
 				var url = endpoint + "?query=" + encodeURIComponent(query);
 				var format = "application/sparql-results+json";
@@ -25,7 +25,7 @@
 	    		outputJSON = JSON.parse(request.responseText);
 	  		})
 			}
-
+			
 			//var endpoint = "http://dbpedia.org/sparql";
 			//var query = "SELECT * WHERE{ ?a ?b ?c} LIMIT 10";
 
@@ -63,6 +63,8 @@
 	    function toggle(){
 	    	d3sparql.toggle();
 	    }
+			window.onload = function(){d3sparql.forcegraph(outputJSON,config);};
+			
 		</script>
 
   <body>
