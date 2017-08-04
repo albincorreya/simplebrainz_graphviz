@@ -12,6 +12,13 @@
 		///*
 			//d3.select("body").append("p").text("Get the links");
 			var outputJSON; //global variable
+			var config = {
+	        "charge": -500,
+	        "distance": 50,
+	        "width": 1000,
+	        "height": 750,
+	        "selector": "#result"
+	      };
 			function onclickSearch(){
 				//var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
@@ -24,6 +31,7 @@
 				d3.xhr(url, format, function(request) {
 	    		outputJSON = JSON.parse(request.responseText);
 	  		})
+				sampleGraph();
 			}
 			
 			//var endpoint = "http://dbpedia.org/sparql";
@@ -41,13 +49,6 @@
 			var queryUrl = endpoint + '?' + querypart;
 			*/
 
-			var config = {
-	        "charge": -500,
-	        "distance": 50,
-	        "width": 1000,
-	        "height": 750,
-	        "selector": "#result"
-	      };
 
 	    function render(json) {
 	      var config = {
@@ -63,7 +64,7 @@
 	    function toggle(){
 	    	d3sparql.toggle();
 	    }
-			window.onload = function(){d3sparql.forcegraph(outputJSON,config);};
+			function sampleGraph(){d3sparql.forcegraph(outputJSON,config);};
 			
 		</script>
 
