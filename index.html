@@ -21,7 +21,7 @@
 	      };
 			
 			function onclickSearch(){
-				var endpoint ="http://localhost:8890/sparql";
+				//var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
 				//var endpoint = "https://dbpedia.org/sparql";
 				var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
@@ -35,7 +35,7 @@
 	  		})
 			}
 			
-			//var endpoint = "http://dbpedia.org/sparql";
+			var endpoint = "http://dbpedia.org/sparql";
 			//var query = "SELECT * WHERE{ ?a ?b ?c} LIMIT 10";
 
 			/*
