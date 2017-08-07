@@ -67,7 +67,7 @@
 		</script>
 
   <body>
-    <div id="query" style="margin: 4px">
+    <div id="dropdown" style="margin: 4px">
       <h1>Simplebrainz Browser</h1>
       <form class="form-inline">
         <label>SPARQL:</label>
@@ -80,7 +80,7 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		<label>MBID:</label>
 		<textarea id="mbid" class="span9" rows=1>
 		</textarea>
-		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Entity
+		<button class="btn dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Entity
 		<span class="caret"></span></button>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
 			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Artist</a></li>
@@ -90,7 +90,7 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Area</a></li>
 			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Role</a></li>    
 			</ul>
-        <button class="btn" type="button" onclick="onclickSearch()">Query</button>
+        <button class="btn btn-primary" type="button" onclick="onclickSearch()">Query</button>
         <!--<button class="btn" type="button" onclick="sampleGraph()">Get Graph</button>--> 
         </div>
       </form>
