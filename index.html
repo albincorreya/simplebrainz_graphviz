@@ -17,6 +17,9 @@
 		///*
 			//d3.select("body").append("p").text("Get the links");
 			var outputJSON; //global variable
+			//var inputQuery = 
+			//var inputMbid = 
+
 			var config = {
 	        "charge": -300,
 	        "distance": 150,
@@ -25,11 +28,15 @@
 	        "selector": "#result"
 	      };
 			
+		
 			function onclickSearch(){
-				//var endpoint ="http://localhost:8890/sparql";
+				var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
-				var endpoint = "https://dbpedia.org/sparql";
-				var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
+				//var endpoint = "https://dbpedia.org/sparql";
+				var query = d3.select("#sparql").property("value");
+				if(query<6){
+					var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
+				}
 				//var query = "PREFIX rank:<http://www.ontotext.com/owlim/RDFRank#> SELECT ?n WHERE {?n rank:hasRDFRank ?r } ORDER BY DESC(?r) LIMIT 100";
 				var url = endpoint + "?query=" + encodeURIComponent(query);
 				var format = "application/sparql-results+json";
@@ -60,17 +67,31 @@
 		</script>
 
   <body>
-    <div id="query" style="margin: 8px">
+    <div id="query" style="margin: 4px">
       <h1>Simplebrainz Browser</h1>
       <form class="form-inline">
         <label>SPARQL:</label>
         <div class="input-append">
           <!--<input id="endpoint" <col>ass="span5" value="" type="text">-->
-		<textarea id="sparql" class="span9" rows=8>
+		<textarea id="sparql" class="span9" rows=4>
+SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		</textarea>
 		<button class="btn" type="button" onclick="toggle()"><i id="button" class="icon-chevron-up"></i></button>
-          <button class="btn" type="button" onclick="onclickSearch()">Query</button>
-		<!--<button class="btn" type="button" onclick="sampleGraph()">Get sample</button>-->  
+		<label>MBID:</label>
+		<textarea id="mbid" class="span9" rows=1>
+		</textarea>
+		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Entity
+		<span class="caret"></span></button>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Artist</a></li>
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Release</a></li>
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Song</a></li>
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Label</a></li>
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Area</a></li>
+			<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Role</a></li>    
+			</ul>
+        <button class="btn" type="button" onclick="onclickSearch()">Query</button>
+        <!--<button class="btn" type="button" onclick="sampleGraph()">Get Graph</button>--> 
         </div>
       </form>
     </div>
