@@ -34,12 +34,20 @@
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
 				//var endpoint = "https://dbpedia.org/sparql";
 				var query = d3.select("#sparql").property("value");
-				if(query<6){
+				var format = "application/sparql-results+json";
+				if(query.length<6){
 					var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
 				}
 				//var query = "PREFIX rank:<http://www.ontotext.com/owlim/RDFRank#> SELECT ?n WHERE {?n rank:hasRDFRank ?r } ORDER BY DESC(?r) LIMIT 100";
+				/*
+				var params = {"query": query, "format":format,"Access-Control-Allow-Origin": 'http://albincorreya.github.io/smb_browser'};
+
+				var querypart="";
+				for(var k in params) {
+					querypart+=k+"="+encodeURIComponent(params[k])+"&";
+				}*/
 				var url = endpoint + "?query=" + encodeURIComponent(query);
-				var format = "application/sparql-results+json";
+				//var url = endpoint + '?' + querypart;
 				//var format = "application/json";	
 				d3.xhr(url, format, function(request) {
 	    		outputJSON = JSON.parse(request.responseText);
@@ -63,6 +71,33 @@
 			var queryUrl = endpoint + '?' + querypart;
 			*/
 			function sampleGraph(){d3sparql.forcegraph(outputJSON,config);};
+
+
+			function stdQuery(){
+				var endpoint ="http://localhost:8890/sparql";
+				var query = d3.select("#sparql").property("value");
+				var format = "application/sparql-results+json";
+				if(query.length<6){
+					var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
+				}			
+				var params = {"query": query, "format":format};
+				var querypart="";
+				for(var k in params) {
+					querypart+=k+"="+encodeURIComponent(params[k])+"&";
+	
+				var url = endpoint + '?' + querypart;
+			    var xmlhttp = new XMLHttpRequest();
+			    xmlhttp.onreadystatechange = function() {
+			        if (this.readyState == 4 && this.status == 200) {
+			        	window.alert("Success!")
+			        	outputJSON = JSON.parse(xmlhttp.responseText);
+			        }
+			    };
+			        xmlhttp.open("GET", url , true);
+			        xmlhttp.setRequestHeader( 'Access-Control-Allow-Origin', 'https://albincorreya.github.io');
+			        xmlhttp.send();
+						}
+			}
 			
 		</script>
 
