@@ -36,7 +36,8 @@
 				//var format = "application/json";	
 				d3.xhr(url, format, function(request) {
 	    		outputJSON = JSON.parse(request.responseText);
-					window.alert("Successful request!");
+					sampleGraph();
+					//window.alert("Successful request!");
 	  		})
 			}
 			
@@ -68,7 +69,7 @@
 		<textarea></textarea>
 		<button class="btn" type="button" onclick="toggle()"><i id="button" class="icon-chevron-up"></i></button>
           <button class="btn" type="button" onclick="onclickSearch()">Query</button>
-		<button class="btn" type="button" onclick="sampleGraph()">Get sample</button>   
+		<!--<button class="btn" type="button" onclick="sampleGraph()">Get sample</button>-->  
         </div>
       </form>
     </div>
