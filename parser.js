@@ -1,6 +1,6 @@
 
 
-/* TODO : Since d3sparql library is not sufficient for our needs, we have to write custom 
+/* TODO : Since d3sparql library is not sufficient for our needs, we have to write custom
 			json response parsors' for meaningfully visualize linked-data using d3.js
 
 */
@@ -8,12 +8,14 @@
 
 function responseParser(json){
 	var myJSON = json.results.bindings
-	var myArray = [];
+	var nodes = [];
+	var edges = [];
 	for(var i=0; i<myJSON.length; i++){
-		myArray[i] = myJSON[i].o.value;
+		if(myJSON[i].s.value){nodes[i] = myJSON[i].s.value;}
+		if(myJSON.[i].o.value){edges[i] = myJSON[i].o.value;}
 		//window.alert(myJSON[i].o.value);
 	}
-	return myArray;
+	return nodes,edges;
 }
 
 
