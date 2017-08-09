@@ -4,13 +4,13 @@
 		<html>
 		<head>
 		<!--<link rel="stylesheet" type="text/css" href="index.css">-->
-			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<title>simplebrainz.org</title>
 		</head>
 		<script src="https://d3js.org/d3.v3.min.js"></script>
 		<script src="./src/d3sparql.js"></script>
 		<script src="./parser.js"></script>>
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
 		<script src="./test.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script>
@@ -56,23 +56,9 @@
 	  		})
 			}
 			
-			//var endpoint = "http://dbpedia.org/sparql";
-			//var query = "SELECT * WHERE{ ?a ?b ?c} LIMIT 10";
-
-			/*
-			var format = "application/sparql-results+json";
-			var params={"default-graph": "", "query": query,"debug": "on", "format": format,"save": "display"};
-
-			var querypart="";
-			for(var k in params) {
-				querypart+=k+"="+encodeURIComponent(params[k])+"&";
-			}
-		
-			var queryUrl = endpoint + '?' + querypart;
-			*/
 			function sampleGraph(){d3sparql.forcegraph(outputJSON,config);};
 
-
+			/*
 			function stdQuery(){
 				var endpoint ="http://localhost:8890/sparql";
 				var query = d3.select("#sparql").property("value");
@@ -98,6 +84,7 @@
 			        xmlhttp.send();
 						}
 			}
+			*/
 			
 		</script>
 
