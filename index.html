@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="./style.css">
 		<!--<title>simplebrainz.org</title>-->
 		<div id="simplebrainzhead" class="tabcontent">
- 			<h1>Simplebrainz</h1>
+			<h1>Simplebrainz</h1>
 		</div>
 		</head>
 		<script src="https://d3js.org/d3.v3.min.js"></script>
@@ -39,8 +39,8 @@
 			"radius": 25 || function(d) { return d.value ? scale(d.value) : 1 + d.label.length },
 			"charge": -800,
 			"distance": 180,
-			"width": 1400,
-			"height": 1000,
+			"width": 1450,
+			"height": 1200,
 			"selector": "#result",
 			"gravity": .50,
 			"friction": .9,
@@ -249,6 +249,7 @@
 	  <form class="form-inline">
 				<!--<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>-->
 		<div class="input-append">
+			<label>SPARQL:</label
 		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">
 SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		</textarea>
@@ -257,8 +258,8 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		<label>Entity:</label>
 		<select id="entity" name="mydropdown">
 			<option value="artist">Artist</option>
-			<option value="release-group">Release</option>
-			<option value="recording">Recordings</option>
+			<option value="release-group">Release-Group</option>
+			<option value="recording">Recording</option>
 			<option value="work">Work</option>
 			<option value="area">Area</option>
 		</select>
