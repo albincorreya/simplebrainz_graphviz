@@ -198,6 +198,30 @@
 
 			function removeOptions(){$('#filter').find('option').remove().end();};
 
+
+
+			function getRelationships(json){
+				var relArray = [];
+				relArray[0] = "None";
+				var myJSON = json.results.bindings;
+				var j = 1;
+				for(var i=3; i<myJSON.length; i++){
+					relArray[j] = parseMbid(myJSON[i].p.value);
+					j++;
+				}
+				function unique(list) {
+					var result = [];
+					$.each(list, function(i, e) {
+					if ($.inArray(e, result) == -1) result.push(e);
+					});
+					return result;
+				}
+				var outArray = unique(relArray).filter(function( element ) {
+					return element !== undefined;
+				});
+				return outArray;
+			}
+			
 			function populateFilterOptions(filters){ 
 				removeOptions(); 
 				var sel = document.getElementById('filter');
