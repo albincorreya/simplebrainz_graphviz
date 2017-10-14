@@ -1,0 +1,22 @@
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+
+#result {
+  background-color: white;
+}
+
+.node .type1 {
+  fill:#690011;
+}
+.node .type2 {
+  fill:#BF0426;
+}

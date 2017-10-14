@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- Optimized from http://biohackathon.org/d3sparql/d3sparql.html -->
+		<html>
+		<head>
+		<!--<link rel="stylesheet" type="text/css" href="index.css">-->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="./style.css">
+		<title>simplebrainz.org</title>
+		</head>
+		<script src="https://d3js.org/d3.v3.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+		<script src="./src/d3sparql.js"></script>
+		<script src="./data/testjson.js"></script>
+		<script src="./src/dataviz.js"></script>>
+		<script>
+		///*
+
+			//global variables
+
+			var outputJSON;
+			var endpoint ="http://localhost:8890/sparql";
+
+			var config = {
+					"label": "name",
+					"radius": 18,
+	        "charge": -500,
+	        "distance": 50,
+	        "width": 1000,
+	        "height": 750,
+	        "selector": "#result",
+					"gravity": .50,
+					"friction": .2,
+					"ClusterPadding": 6
+	      };
+
+
+			function onclickSearch(){
+				//var endpoint ="http://localhost:8890/sparql";
+				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
+				//var endpoint = "https://dbpedia.org/sparql";
+				var query = d3.select("#sparql").property("value");
+				var format = "application/sparql-results+json";
+				if(query.length<6 && toggle()==0){
+					var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
+				}
+				/*
+				if(document.querySelector('.messageCheckbox:checked').value=='on'){
+					var query=d3.select("#sparql").property("value");
+					if(query.length<6 && toggle()==0){
+						var query = "SELECT DISTINCT WHERE{ ?s ?p ?o} LIMIT 50";
+						document.getElementById('myTextarea').value = query;
+					}
+				}else{
+					var query = parseQuery(d3.select("#entity").property("value"),d3.select("#mbid").property("value"));
+				}
+				*/
+				var url = endpoint + "?query=" + encodeURIComponent(query);
+				//var url = endpoint + '?' + querypart;
+				//var format = "application/json";
+				d3.xhr(url, format, function(request) {
+	    		outputJSON = JSON.parse(request.responseText);
+					//sampleGraph();
+					console.log;("Successful request!");
+	  		})
+			}
+
+			//function sampleGraph(){d3sparql.forcegraph(outputJSON,config);}
+
+			function toggle(){return 0;}
+
+
+			function graph(){
+				myForceGraph(outputParser(parseJsonTest),config);
+			}
+
+
+		</script>
+
+  <body>
+		<h1>Simplebrainz</h1>
+    <div id="dropdown" style="margin: 10px">
+      <form class="form-inline">
+				<!--<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>-->
+        <div class="input-append">
+		<textarea id="sparql" class="span9" rows="6" cols="100" style="width:280px;">
+SELECT * WHERE{ ?a ?b ?c} LIMIT 100
+		</textarea>
+		<label>MBID:</label>
+		<textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">83d91898-7763-47d7-b03b-b92132375c47</textarea>
+		<label>Entity:</label>
+		<select id="entity" name="mydropdown">
+			<option value="artist">Artist</option>
+			<option value="release-group">Release</option>
+			<option value="recordings">Recordings</option>
+			<option value="work">Work</option>
+			<option value="area">Area</option>
+		</select>
+		<label>Filter by:</label>
+		<select name="mysortlist">
+			<option value="All">All</option>
+			<option value="artist">Members</option>
+			<option value="release-group">Tribute_artists</option>
+			<option value="Recordings">supporting__by</option>
+			<option value="Work">Work</option>
+			<option value="Area">Area</option>
+		</select>
+    <button class="btn btn-primary" type="button" onclick="graph()">Query</button>
+    </div>
+    </form>
+    </div>
+    <div id="result"></div>
+		<div class="footer">
+  	<p>simplebrainz.org, musicbrainz.org, MTG, UPF, Barcelona</p>
+		</div>
+  </body>
+</html>
