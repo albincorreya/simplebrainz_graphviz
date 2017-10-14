@@ -25,6 +25,7 @@
 
 			window.onload = function(){
 				$('#filter').find('option').remove().end();
+				populateFilterOptions(['None']);
 			}
 
 			var outputJSON;
@@ -248,8 +249,8 @@
 	<div id="dropdown" style="margin: 10px">
 	  <form class="form-inline">
 				<!--<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>-->
+		<label>SPARQL:</label>
 		<div class="input-append">
-			<label>SPARQL:</label>
 		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">
 SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		</textarea>
