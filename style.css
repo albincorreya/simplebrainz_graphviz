@@ -1,4 +1,18 @@
 
+#simplebrainzhead {background-color:#2F4F4F;
+                  color: white;
+                  text-shadow: 1px .5px #2F4F4F}
+
+
+}
+
+
+.body {
+    background-color: #708090);
+  }
+
+
+
 .footer {
     position: fixed;
     left: 0;
@@ -20,3 +34,5 @@
 .node .type2 {
   fill:#BF0426;
 }
+
+

@@ -7,7 +7,10 @@
 		<!--<link rel="stylesheet" type="text/css" href="index.css">-->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="./style.css">
-		<title>simplebrainz.org</title>
+		<!--<title>simplebrainz.org</title>-->
+		<div id="simplebrainzhead" class="tabcontent">
+ 			<h1>Simplebrainz</h1>
+		</div>
 		</head>
 		<script src="https://d3js.org/d3.v3.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -20,21 +23,109 @@
 
 			//global variables
 
+			window.onload = function(){
+				$('#filter').find('option').remove().end();
+			}
+
 			var outputJSON;
-			var endpoint ="http://localhost:8890/sparql";
+			var jsonLabel;
+			var endpoint = "http://localhost:8890/sparql";
+			var format = "application/sparql-results+json";
+
+
 
 			var config = {
-					"label": "name",
-					"radius": 18,
-	        "charge": -500,
-	        "distance": 50,
-	        "width": 1000,
-	        "height": 750,
-	        "selector": "#result",
-					"gravity": .50,
-					"friction": .2,
-					"ClusterPadding": 6
-	      };
+			"label": "name",
+			"radius": 25 || function(d) { return d.value ? scale(d.value) : 1 + d.label.length },
+			"charge": -800,
+			"distance": 180,
+			"width": 1300,
+			"height": 950,
+			"selector": "#result",
+			"gravity": .50,
+			"friction": .9,
+			"ClusterPadding": 1
+			};
+
+
+			function formatUri(){
+			var mbid = d3.select("#mbid").property("value");
+			//var mbid = "83d91898-7763-47d7-b03b-b92132375c47";
+			var entity = d3.select("#entity").property("value");
+			//var entity = "artist";
+			return "http://musicbrainz.org/"+entity+"/"+mbid
+			}
+
+
+
+			function getRequestUrl(entity,mbid){
+				var query = parseInnerQuery(entity,mbid);
+				var url = endpoint + "?query=" + encodeURIComponent(query);
+				return url
+			}
+
+			function xmlRequest(){
+			var url = getRequestUrl("artist","83d91898-7763-47d7-b03b-b92132375c47");
+			console.log(url);   
+			xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET",url);
+			xmlhttp.onreadystatechange = readystateParseEntityName();
+			xmlhttp.send();
+			}
+
+			function readystateParseEntityName(){
+				var response;
+				if (this.readyState == 4){
+						response = JSON.stringify(this.responseText);
+						console.log(this.responseText);
+						return response;
+					}
+			}
+
+
+			function xhrEntityName(entity, mbid){
+				//endpoint = "http://localhost:8890/sparql";
+				//var format = "application/sparql-results+json";
+				var query = parseInnerQuery(entity,mbid);
+				var url = endpoint + "?query=" + encodeURIComponent(query);
+				console.log(url);
+				d3.xhr(url, format, function(request) {
+					jsonLabel = JSON.parse(request.responseText);
+					//window.alert("label done")
+				});
+				return jsonLabel.results.bindings[0].o.value
+			}
+
+
+
+			function testAjax(entity, mbid){
+				var response;
+				var query = parseInnerQuery(entity,mbid);
+				var uri = endpoint + "?query=" + encodeURIComponent(query);
+				console.log(uri);
+				$.ajax({ 
+					type: 'GET',
+					url: uri, 
+					data: JSON.stringify({ get_param: 'value' }),
+					dataType: format,
+					success: function (json) { 
+						console.log(JSON.stringyfy(json.topics));
+						parser = new DOMParser();
+						response = parser.parseFromString(txt,JSON.stringyfy(json.topics));
+					}
+				});
+				return response
+			}
+
+			/*
+			function callBack(myJson){
+				console.log(myJson.results.bindings[0].o.value);
+				return myJson.results.bindings[0].o.value;
+
+			}
+			*/
+
+
 
 
 			function onclickSearch(){
@@ -42,7 +133,7 @@
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
 				//var endpoint = "https://dbpedia.org/sparql";
 				var query = d3.select("#sparql").property("value");
-				var format = "application/sparql-results+json";
+				//var format = "application/sparql-results+json";
 				if(query.length<6 && toggle()==0){
 					var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
 				}
@@ -61,30 +152,79 @@
 				//var url = endpoint + '?' + querypart;
 				//var format = "application/json";
 				d3.xhr(url, format, function(request) {
-	    		outputJSON = JSON.parse(request.responseText);
+				outputJSON = JSON.parse(request.responseText);
 					//sampleGraph();
 					console.log;("Successful request!");
-	  		})
+			})
 			}
 
 			//function sampleGraph(){d3sparql.forcegraph(outputJSON,config);}
 
 			function toggle(){return 0;}
 
-
-			function graph(){
-				myForceGraph(outputParser(parseJsonTest),config);
+			function parseSearch(){
+				var format = "application/sparql-results+json";
+				var mbid = d3.select("#mbid").property("value");
+				var entity = d3.select("#entity").property("value");
+				var query = parseQuery(entity,mbid);
+				var url = endpoint + "?query=" + encodeURIComponent(query);
+				d3.xhr(url, format, function(request) {
+					outputJSON = JSON.parse(request.responseText);
+					updateGraph(outputJSON);
+					window.alert("Successful request!");
+				})
+				return outputJSON;
 			}
 
 
+
+			function myGraph(){
+				populateFilterOptions(getRelationships(parseJsonTest));
+				var outGraph = outputParser(parseJsonTest);
+				myForceGraph(outGraph,config);
+			}
+
+
+			function updateGraph(jsonout){
+				populateFilterOptions(getRelationships(jsonout));
+				myForceGraph(outputParser(jsonout),config);
+			}
+
+			function demoQuery(){
+				parseSearch();
+				updateGraph(outputJSON);
+			}
+
+
+			function removeOptions(){$('#filter').find('option').remove().end();};
+
+			function populateFilterOptions(filters){ 
+				removeOptions(); 
+				var sel = document.getElementById('filter');
+				var fragment = document.createDocumentFragment();
+				filters.forEach(function(filters, index) {
+				var opt = document.createElement('option');
+				opt.innerHTML = filters;
+				opt.value = filters;
+				fragment.appendChild(opt);
+			});
+			sel.appendChild(fragment);
+			}
+/*
+
+
+			document.addEventListener("DOMContentLoaded", function(event) {
+				console.log("DOM fully loaded and parsed");
+			});
+
+*/
 		</script>
 
   <body>
-		<h1>Simplebrainz</h1>
-    <div id="dropdown" style="margin: 10px">
-      <form class="form-inline">
+	<div id="dropdown" style="margin: 10px">
+	  <form class="form-inline">
 				<!--<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>-->
-        <div class="input-append">
+		<div class="input-append">
 		<textarea id="sparql" class="span9" rows="6" cols="100" style="width:280px;">
 SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		</textarea>
@@ -94,26 +234,28 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		<select id="entity" name="mydropdown">
 			<option value="artist">Artist</option>
 			<option value="release-group">Release</option>
-			<option value="recordings">Recordings</option>
+			<option value="recording">Recordings</option>
 			<option value="work">Work</option>
 			<option value="area">Area</option>
 		</select>
 		<label>Filter by:</label>
-		<select name="mysortlist">
+		<select id="filter" name="mysortlist">
+		<!--
 			<option value="All">All</option>
 			<option value="artist">Members</option>
 			<option value="release-group">Tribute_artists</option>
 			<option value="Recordings">supporting__by</option>
 			<option value="Work">Work</option>
 			<option value="Area">Area</option>
+		-->
 		</select>
-    <button class="btn btn-primary" type="button" onclick="graph()">Query</button>
-    </div>
-    </form>
-    </div>
-    <div id="result"></div>
+	<button class="btn btn-primary" type="button" onclick="demoQuery();">Query</button>
+	</div>
+	</form>
+	</div>
+	<div id="result"></div>
 		<div class="footer">
-  	<p>simplebrainz.org, musicbrainz.org, MTG, UPF, Barcelona</p>
+	<p>simplebrainz.org, Music Technology Group, UPF, Barcelona</p>
 		</div>
   </body>
 </html>

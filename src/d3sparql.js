@@ -798,18 +798,22 @@ d3sparql.forcegraph = function(graph, config) {
   var svg = d3sparql.select(opts.selector, "forcegraph").append("svg")
     .attr("width", opts.width)
     .attr("height", opts.height)
+
   var link = svg.selectAll(".link")
     .data(graph.links)
     .enter()
     .append("line")
     .attr("class", "link")
+
   var node = svg.selectAll(".node")
     .data(graph.nodes)
     .enter()
     .append("g")
+
   var circle = node.append("circle")
     .attr("class", "node")
     .attr("r", opts.radius)
+
   var text = node.append("text")
     .text(function(d) { return d[opts.label || "label"] })
     .attr("class", "node")
@@ -820,6 +824,7 @@ d3sparql.forcegraph = function(graph, config) {
     .nodes(graph.nodes)
     .links(graph.links)
     .start()
+    
   force.on("tick", function() {
     link.attr("x1", function(d) { return d.source.x })
         .attr("y1", function(d) { return d.source.y })
