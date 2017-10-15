@@ -39,12 +39,6 @@ function delete_null_properties(test, recurse) {
 function outputParser(json){
 	var graph = {"nodes":[],"links":[]}; //
 	var myJSON = json.results.bindings;
-
-	//var queryMbid = d3.select("#mbid").property("value");
-	//var queryMbid = document.getElementById('mbid').value;
-	//var iEnity = document.getElementById('entity').value;
-	//var queryMbid = "83d91898-7763-47d7-b03b-b92132375c47";
-	//var iName = xhrEntityName(static_entity,static_mbid,callBack);
 	var iName = xhrEntityName(parseEntity(formatUri()), parseMbid(formatUri()));
 	var queriedNode = {"mbid":parseMbid(formatUri()),"uri":formatUri(),"type":parseEntity(formatUri()),"name": iName};
 	graph.nodes.push(queriedNode);
@@ -254,8 +248,8 @@ function myForceGraph (graph,config) {
 
 			text.attr({
 				"stroke":"black",
-			  "font-size": "8px",
-			  "font-family": "sans-serif",
+			  	"font-size": "10px",
+			  	"font-family": "sans-serif",
 			})
 
 			

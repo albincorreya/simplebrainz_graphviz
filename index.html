@@ -23,6 +23,7 @@
 			window.onload = function(){
 				$('#filter').find('option').remove().end();
 				populateFilterOptions(['none']);
+				$('#pageloader').hide();
 			}
 
 			//global variables
@@ -68,69 +69,25 @@
 				return url
 			}
 
-			function xmlRequest(){
-			var url = getRequestUrl("artist","83d91898-7763-47d7-b03b-b92132375c47");
-			console.log(url);   
-			xmlhttp = new XMLHttpRequest();
-			xmlhttp.open("GET",url);
-			xmlhttp.onreadystatechange = readystateParseEntityName();
-			xmlhttp.send();
-			}
-
-			function readystateParseEntityName(){
-				var response;
-				if (this.readyState == 4){
-						response = JSON.stringify(this.responseText);
-						console.log(this.responseText);
-						return response;
-					}
-			}
-
 
 			function xhrEntityName(entity, mbid){
-				//endpoint = "http://localhost:8890/sparql";
-				//var format = "application/sparql-results+json";
-				var query = parseInnerQuery(entity,mbid);
-				var url = endpoint + "?query=" + encodeURIComponent(query);
-				console.log(url);
-				d3.xhr(url, format, function(request) {
-					jsonLabel = JSON.parse(request.responseText);
-					//window.alert("label done")
-				});
-				return jsonLabel.results.bindings[0].o.value
-			}
-
-
-
-			function testAjax(entity, mbid){
 				var response;
 				var query = parseInnerQuery(entity,mbid);
 				var uri = endpoint + "?query=" + encodeURIComponent(query);
 				console.log(uri);
-				$.ajax({ 
-					type: 'GET',
-					url: uri, 
-					data: JSON.stringify({ get_param: 'value' }),
-					dataType: format,
-					success: function (json) { 
-						console.log(JSON.stringyfy(json.topics));
-						parser = new DOMParser();
-						response = parser.parseFromString(txt,JSON.stringyfy(json.topics));
+				$.ajax({url: uri, mimeType: format, cache: false, 
+					async: false,
+					data: {format: 'json'}, 
+					error: function(){console.log("Bad request")},
+					type: "GET",
+					success: function(data){
+						console.log("Successful request");
+						console.log(data);
+						response = data;
 					}
 				});
-				return response
+				return response.results.bindings[0].o.value;
 			}
-
-			/*
-			function callBack(myJson){
-				console.log(myJson.results.bindings[0].o.value);
-				return myJson.results.bindings[0].o.value;
-
-			}
-			*/
-
-
-
 
 			function onclickSearch(){
 				//var endpoint ="http://localhost:8890/sparql";
@@ -164,40 +121,7 @@
 
 			//function sampleGraph(){d3sparql.forcegraph(outputJSON,config);}
 
-			function toggle(){return 0;}
 
-			function parseSearch(){
-				var format = "application/sparql-results+json";
-				var mbid = d3.select("#mbid").property("value");
-				var entity = d3.select("#entity").property("value");
-				var query = parseQuery(entity,mbid);
-				var url = endpoint + "?query=" + encodeURIComponent(query);
-				d3.xhr(url, format, function(request) {
-					outputJSON = JSON.parse(request.responseText);
-					updateGraph(outputJSON);
-					window.alert("Successful request!");
-				})
-				return outputJSON;
-			}
-
-
-
-			function myGraph(){
-				populateFilterOptions(getRelationships(parseJsonTest));
-				var outGraph = outputParser(parseJsonTest);
-				myForceGraph(outGraph,config);
-			}
-
-
-			function updateGraph(jsonout){
-				populateFilterOptions(getRelationships(jsonout));
-				myForceGraph(outputParser(jsonout),config);
-			}
-
-			function demoQuery(){
-				parseSearch();
-				updateGraph(outputJSON);
-			}
 
 
 			function removeOptions(){$('#filter').find('option').remove().end();};
@@ -226,38 +150,123 @@
 				return outArray;
 			}
 
-			function populateFilterOptions(filters){ 
+
+			function toggleEvent(){
+				if(document.getElementById("toggletick").checked =="false"){
+					document.getElementById('sparql').style.display = "none";
+				}else if(document.getElementById("toggletick").checked =="true"){
+					document.getElementById("sparql").style.display = "width:280px";
+				}
+			}
+
+
+			function pageLoader(){
+				var img = document.createElement("IMG");
+				document.getElementById("pageloader").appendChild(img);
+				img.class = "Centered";
+				img.src = "./src/img/ajax-loader.gif";
+			}
+
+
+
+			function getFilterOptions(d3graph){
+				var links = d3graph.links;
+				var options = [];
+				options[0] = 'none';
+				var j =1;	
+				for (var i=0; i<links.length; i++){
+					options[j] = links[i].type;
+					j++ 
+				}
+				function unique(list) {
+					var result = [];
+					$.each(list, function(i, e) {
+					if ($.inArray(e, result) == -1) result.push(e);
+					});
+					return result;
+				}
+				return unique(options);
+			}
+
+
+			function populateFilterOptions(options){ 
 				removeOptions(); 
 				var sel = document.getElementById('filter');
 				var fragment = document.createDocumentFragment();
-				filters.forEach(function(filters, index) {
+				options.forEach(function(options, index) {
 				var opt = document.createElement('option');
-				opt.innerHTML = filters;
-				opt.value = filters;
+				opt.innerHTML = options;
+				opt.value = options;
 				fragment.appendChild(opt);
 			});
 			sel.appendChild(fragment);
 			}
-/*
 
 
-			document.addEventListener("DOMContentLoaded", function(event) {
-				console.log("DOM fully loaded and parsed");
-			});
 
-*/
-		</script>
+			function onclickQueryResponse(){
+				var response;
+				var mbid = d3.select("#mbid").property("value");
+				var entity = d3.select("#entity").property("value");
+				var query = parseQuery(entity,mbid);
+				var uri = endpoint + "?query=" + encodeURIComponent(query);
+				$.ajax({url: uri, mimeType: format, cache: false, 
+					async: false,
+					data: {format: 'json'}, 
+					error: function(){console.log("Bad request")},
+					type: "GET",
+					success: function(data){
+						console.log("Successful request");
+						console.log(data);
+						response = data;
+					}
+				});
+				return response;
+			}
+
+
+
+			function onclickGraph(){
+				$('#pageloader').show();
+				var response = onclickQueryResponse();
+				var d3graph = outputParser(response);
+				var options = getFilterOptions(d3graph);
+				populateFilterOptions(options);
+				$('#pageloader').hide();
+				myForceGraph(d3graph,config);
+
+			}
+
+			/* 
+
+			function xhrEntityName(entity, mbid){
+				//endpoint = "http://localhost:8890/sparql";
+				//var format = "application/sparql-results+json";
+				var query = parseInnerQuery(entity,mbid);
+				var url = endpoint + "?query=" + encodeURIComponent(query);
+				console.log(url);
+				d3.xhr(url, format, function(request) {
+					jsonLabel = JSON.parse(request.responseText);
+					//window.alert("label done")
+				});
+				return jsonLabel.results.bindings[0].o.value
+			}
+
+			*/
+
+
+		</script>	 
 
   <body>
 	<div id="dropdown" style="margin: 10px">
 	  <form class="form-inline">
 		<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>
 		<div class="input-append">
-		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">
-		SELECT * WHERE{ ?a ?b ?c} LIMIT 100
+		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px"; onclick="toggleEvent()">
+SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		</textarea>
 		<label>MBID:</label>
-		<textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">83d91898-7763-47d7-b03b-b92132375c47</textarea>
+		<textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">9a709693-b4f8-4da9-8cc1-038c911a61be</textarea>
 		<label>Entity:</label>
 		<select id="entity" name="mydropdown">
 			<option value="artist">Artist</option>
@@ -278,13 +287,17 @@
 			<option value="Area">Area</option>
 		-->
 		</select>
-	<button class="btn btn-primary" type="button" onclick="demoQuery();">Query</button>
+	<button class="btn btn-primary" type="button" onclick="onclickGraph();">Query</button>
 	</div>
 	</form>
 	</div>
-	<div id="result"></div>
-		<div class="footer">
-	<p>simplebrainz.org, Music Technology Group, UPF, Barcelona</p>
-		</div>
+	<div id="result">
+		<div id="pageloader">
+			<span class="Centerer"></span>
+			<!--<img class="Centered" src="./src/img/ajax-loader.gif" />-->
+		</div>	
+	<div class="footer">
+		<p>simplebrainz.org, Music Technology Group, UPF, Barcelona</p>
+	</div>
   </body>
 </html>
