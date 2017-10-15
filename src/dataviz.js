@@ -211,6 +211,8 @@ function newforceGraph (graph, config){
 
 
 
+
+
 function myForceGraph (graph,config) {
 
 	var nodes = graph.nodes;
