@@ -19,14 +19,13 @@
 		<script src="./data/testjson.js"></script>
 		<script src="./src/dataviz.js"></script>>
 		<script>
-		///*
-
-			//global variables
 
 			window.onload = function(){
 				$('#filter').find('option').remove().end();
-				populateFilterOptions(['None']);
+				populateFilterOptions(['none']);
 			}
+
+			//global variables
 
 			var outputJSON;
 			var jsonLabel;
@@ -35,6 +34,7 @@
 
 
 
+			//d3 graph config file
 			var config = {
 			"label": "name",
 			"radius": 25 || function(d) { return d.value ? scale(d.value) : 1 + d.label.length },
@@ -48,6 +48,9 @@
 			"ClusterPadding": 1
 			};
 
+
+
+			//functions
 
 			function formatUri(){
 			var mbid = d3.select("#mbid").property("value");
@@ -248,7 +251,7 @@
   <body>
 	<div id="dropdown" style="margin: 10px">
 	  <form class="form-inline">
-				<!--<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>-->
+		<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>
 		<label>SPARQL:</label>
 		<div class="input-append">
 		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">

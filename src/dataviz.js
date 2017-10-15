@@ -1,20 +1,3 @@
-/* TODO : Since d3sparql library is not sufficient for our needs, we have to write custom
-			json response parsors' for meaningfully visualize linked-data using d3.js
-
-
-
-var static_mbid;
-var static_entity;
-
-$(function(){
-	static_mbid = document.getElementById('mbid').value;
-	static_entity = document.getElementById('entity').value;
-});
-
-*/
-
-
-
 
 
 // some utility functions
@@ -102,27 +85,7 @@ function outputParser(json){
 }
 
 
-function getRelationships(json){
-	var relArray = [];
-	relArray[0] = "None";
-	var myJSON = json.results.bindings;
-	var j = 1;
-	for(var i=3; i<myJSON.length; i++){
-		relArray[j] = parseMbid(myJSON[i].p.value);
-		j++;
-	}
-	function unique(list) {
-		var result = [];
-		$.each(list, function(i, e) {
-		if ($.inArray(e, result) == -1) result.push(e);
-		});
-		return result;
-	}
-	var outArray = unique(relArray).filter(function( element ) {
-		return element !== undefined;
-	});
-	return outArray;
-}
+	
 //outputParser(parseJsonTest);
 
 
