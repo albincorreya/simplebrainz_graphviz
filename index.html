@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<!-- Optimized from http://biohackathon.org/d3sparql/d3sparql.html -->
 		<html>
 		<head>
 		<!--<link rel="stylesheet" type="text/css" href="index.css">-->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="./style.css">
+		<link rel="stylesheet" href="./src/styles/fakeLoader.css">
 		<!--<title>simplebrainz.org</title>-->
 		<div id="simplebrainzhead" class="tabcontent">
 			<h1>Simplebrainz</h1>
@@ -18,9 +18,16 @@
 		<script src="./src/d3sparql.js"></script>
 		<script src="./data/testjson.js"></script>
 		<script src="./src/dataviz.js"></script>>
+		<script type="text/javascript" src="./src/fakeLoader.min.js"></script>
 		<script>
 
 			window.onload = function(){
+				$("#fakeLoader").fakeLoader({
+					timeToHide:1900, //Time in milliseconds for fakeLoader disappear
+					zIndex:999, // Default zIndex
+					spinner:"spinner2",//Options: 'spinner1', 'spinner2', 'spinner3', 'spinner4', 'spinner5', 'spinner6', 'spinner7' 
+					bgColor:"#77C9D4"//Hex, RGB or RGBA colors
+				});
 				$('#filter').find('option').remove().end();
 				populateFilterOptions(['none']);
 				$('#pageloader').hide();
@@ -69,26 +76,6 @@
 				return url
 			}
 
-
-			function xhrEntityName(entity, mbid){
-				var response;
-				var query = parseInnerQuery(entity,mbid);
-				var uri = endpoint + "?query=" + encodeURIComponent(query);
-				console.log(uri);
-				$.ajax({url: uri, mimeType: format, cache: false, 
-					async: false,
-					data: {format: 'json'}, 
-					error: function(){console.log("Bad request")},
-					type: "GET",
-					success: function(data){
-						console.log("Successful request");
-						//console.log(data);
-						response = data;
-					}
-				});
-				console.log(response.results.bindings[0].o.value);
-				return response.results.bindings[0].o.value;
-			}
 
 			function onclickSearch(){
 				//var endpoint ="http://localhost:8890/sparql";
@@ -166,6 +153,7 @@
 				document.getElementById("pageloader").appendChild(img);
 				img.class = "Centered";
 				img.src = "./src/img/ajax-loader.gif";
+				$('#pageloader').show();
 			}
 
 
@@ -204,6 +192,26 @@
 			}
 
 
+			function xhrEntityName(entity, mbid){
+				var response;
+				var query = parseInnerQuery(entity,mbid);
+				var uri = endpoint + "?query=" + encodeURIComponent(query);
+				console.log(uri);
+				$.ajax({url: uri, mimeType: format, cache: false,
+					async: false,
+					data: {format: 'json'}, 
+					error: function(){console.log("Bad request")},
+					type: "GET",
+					success: function(data){
+						console.log("Successful request");
+						//console.log(data);
+						response = data;
+					}
+				});
+				console.log(response.results.bindings[0].o.value);
+				return response.results.bindings[0].o.value;
+			}
+
 
 			function onclickQueryResponse(){
 				var response;
@@ -228,13 +236,13 @@
 
 
 			function onclickGraph(){
+				$('#pageloader').show();
 				var response = onclickQueryResponse();
 				var d3graph = outputParser(response);
 				var options = getFilterOptions(d3graph);
 				populateFilterOptions(options);
-				//$('#pageloader').hide();
+				$('#pageloader').hide();
 				myForceGraph(d3graph,config);
-
 			}
 
 			/* 
@@ -266,7 +274,7 @@
 SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		</textarea>
 		<label>MBID:</label>
-		<textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">9a709693-b4f8-4da9-8cc1-038c911a61be</textarea>
+		<textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">0fb267e2-7175-4537-a9f2-e835ecc81ff7</textarea>
 		<label>Entity:</label>
 		<select id="entity" name="mydropdown">
 			<option value="artist">Artist</option>
@@ -285,19 +293,17 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 			<option value="None">None</option>
 			<!--
 				<option value="All">All</option>
-				<option value="artist">Members</option>
-				<option value="release-group">Tribute_artists</option>
-				<option value="Recordings">supporting__by</option>
-				<option value="Work">Work</option>
-				<option value="Area">Area</option>
 			-->
 			</select>
 	</div>
+	<div id="pageloader">
+		<span class="Centerer"></span>
+		<!--<img class="Centered" src="./src/img/ajax-loader.gif" />-->
+	</div>
 	<div id="result">
-		<div id="pageloader">
-			<span class="Centerer"></span>
-			<!--<img class="Centered" src="./src/img/ajax-loader.gif" />-->
-		</div>	
+		<div id="fakeLoader">
+		</div>
+	</div>	
 	<div class="footer">
 		<p>simplebrainz.org, Music Technology Group, UPF, Barcelona</p>
 	</div>
