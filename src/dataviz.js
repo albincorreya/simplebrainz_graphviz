@@ -90,7 +90,6 @@ function myForceGraph (graph,config) {
 
 	var nodes = graph.nodes;
 	var links = graph.links;
-	//var m = 4;
 
 	/*
 	var svg = d3.select(config.selector)
@@ -115,6 +114,8 @@ function myForceGraph (graph,config) {
 		.attr("width",config.width)
 		.attr("height",config.height)
 		.attr("pointer-events", "all");
+
+		svg.append("svg:title").text(nodes[0].name);
 
 		var color = d3.scale.category10();
 
@@ -181,7 +182,7 @@ function myForceGraph (graph,config) {
 		var caps = event.getModifierState && event.getModifierState( 'CapsLock' );
 		console.log( caps );
 			if(caps){svg.call(d3.behavior.zoom().on("zoom", rescale));}
-			else{zoomFit(25);};// true when you press the keyboard CapsLock key
+			else{zoomFit(250);};// true when you press the keyboard CapsLock key
 		});
 
 		function rescale() {
@@ -255,7 +256,7 @@ function myForceGraph (graph,config) {
 			
 			link.attr({
 			  "stroke": "black",
-			  "stroke-width": "1.8px"
+			  "stroke-width": "1px"
 			}) 
 		}
 
@@ -268,28 +269,6 @@ function myForceGraph (graph,config) {
 }
 
 
-
-
-function zoomFit(transitionDuration) {
-	var bounds = svg.node().getBBox(),
-	parent = svg.node().parentElement.parentElement,
-	fullWidth = parent.clientWidth,
-	fullHeight = parent.clientHeight,
-	width = bounds.width,
-	height = bounds.height,
-	midX = bounds.x + width / 2,
-	midY = bounds.y + height / 2;
-
-	if (width === 0 || height === 0) {
-		return; // nothing to fit
-	}
-
-	svgScale = 0.85 / Math.max(width / fullWidth, height / fullHeight);
-	svgTranslate = [fullWidth / 2 - svgScale * midX, fullHeight / 2 - svgScale * midY];
-
-	svg.attr('transform', 'translate(' + svgTranslate[0] + ', ' + svgTranslate[1] + ') scale(' + svgScale + ')');
-//  moothTransform(svgTranslate, svgScale);
-}
 
 
 

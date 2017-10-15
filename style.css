@@ -7,7 +7,7 @@
 
 
 
-#pageloader
+#pageloader 
 {
     position:absolute;
     width:100%;
@@ -32,6 +32,10 @@
   background-color: white;
 }
 
+
+#filtermodule {
+  vertical-align: right;
+}
 
 /* add footer-style*/
 .footer {
