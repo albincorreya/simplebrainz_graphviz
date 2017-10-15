@@ -3,6 +3,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<html>
 		<head>
+		<script>
+			window.onload = function(){
+				$("#fakeLoader").fakeLoader({
+					timeToHide:1900, //Time in milliseconds for fakeLoader disappear
+					zIndex:999, // Default zIndex
+					spinner:"spinner2",//Options: 'spinner1', 'spinner2', 'spinner3', 'spinner4', 'spinner5', 'spinner6', 'spinner7' 
+					bgColor:"#77C9D4"//Hex, RGB or RGBA colors
+				});
+			}
+		</script>
 		<!--<link rel="stylesheet" type="text/css" href="index.css">-->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="./style.css">
