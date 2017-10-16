@@ -22,7 +22,9 @@
 				$('#filter').find('option').remove().end();
 				populateFilterOptions(['none']);
 				$('#pageloader').hide();
+				//document.getElementById('sparql').style.display = "none";
 			}
+
 
 			//global variables
 
@@ -39,14 +41,24 @@
 			"radius": 25 || function(d) { return d.value ? scale(d.value) : 1 + d.label.length },
 			"charge": -1000,
 			"distance": 200,
-			"width": 1150,
+			"width": 1250,
 			"height": 1300,
 			"selector": "#result",
-			"gravity": .5,
-			"friction": .9,
-			"ClusterPadding": 5
+			"gravity": .2,
+			"friction": .6,
+			"ClusterPadding": 1
 			};
 
+
+/*
+			document.getElementById('toggletick').addEventListener('click',function(){
+				if(document.getElementById("toggletick").checked ==false){
+					document.getElementById('sparql').style.display = "none";
+				}else if(document.getElementById("toggletick").checked ==true){
+					document.getElementById("sparql").style.display = "width:280px";
+				}
+			});
+*/
 
 			function formatUri(){
 			var mbid = d3.select("#mbid").property("value");
@@ -66,12 +78,13 @@
 
 
 			function onclickSearch(){
+				var response;
 				//var endpoint ="http://localhost:8890/sparql";
 				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
 				//var endpoint = "https://dbpedia.org/sparql";
 				var query = d3.select("#sparql").property("value");
 				//var format = "application/sparql-results+json";
-				if(query.length<6 && toggle()==0){
+				if(query.length<6){
 					var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
 				}
 				/*
@@ -85,14 +98,21 @@
 					var query = parseQuery(d3.select("#entity").property("value"),d3.select("#mbid").property("value"));
 				}
 				*/
-				var url = endpoint + "?query=" + encodeURIComponent(query);
+				var uri = endpoint + "?query=" + encodeURIComponent(query);
 				//var url = endpoint + '?' + querypart;
 				//var format = "application/json";
-				d3.xhr(url, format, function(request) {
-				outputJSON = JSON.parse(request.responseText);
-					//sampleGraph();
-					console.log;("Successful request!");
-			})
+				$.ajax({url: uri, mimeType: format, cache: false, 
+					async: false,
+					data: {format: 'json'}, 
+					error: function(){console.log("Bad request")},
+					type: "GET",
+					success: function(data){
+						console.log("Successful request");
+						console.log(data);
+						response = data;
+					}
+				});
+				return response;
 			}
 
 			//function sampleGraph(){d3sparql.forcegraph(outputJSON,config);}
@@ -128,9 +148,9 @@
 
 
 			function toggleEvent(){
-				if(document.getElementById("toggletick").checked =="false"){
+				if(document.getElementById("toggletick").checked ==false){
 					document.getElementById('sparql').style.display = "none";
-				}else if(document.getElementById("toggletick").checked =="true"){
+				}else if(document.getElementById("toggletick").checked ==true){
 					document.getElementById("sparql").style.display = "width:280px";
 				}
 			}
@@ -222,16 +242,34 @@
 			}
 
 
+			function updateDiv()
+			{ 
+			    $( "#result" ).load(window.location.href + " #result" );
+			}
 
 			function onclickGraph(){
 				$('#pageloader').show();
-				var response = onclickQueryResponse();
-				var d3graph = outputParser(response);
-				var options = getFilterOptions(d3graph);
-				populateFilterOptions(options);
-				$('#pageloader').hide();
-				//myForceGraph(d3graph,config);
-				newforceGraph(d3graph,config);
+				//updateDiv();
+				if(document.getElementById("toggletick").checked ==false)
+				{
+					console.log(document.getElementById("toggletick").checked, "loading style2");
+					var response = onclickQueryResponse();
+					var d3graph = outputParser(response);
+					var options = getFilterOptions(d3graph);
+					populateFilterOptions(options);
+					$('#pageloader').hide();
+					//myForceGraph(d3graph,config);
+					newforceGraph(d3graph,config);
+				}
+				else{
+					console.log(document.getElementById("toggletick").checked, "loading style1");
+					var sResponse = onclickSearch();
+					var sd3graph = outputParser(response);
+					console.log(sd3graph);
+					var soptions = getFilterOptions(sd3graph);
+					populateFilterOptions(soptions);
+					newforceGraph(sd3graph,config);
+				}
 			}
 
 			/* 
@@ -251,7 +289,6 @@
 
 			*/
 
-
 		</script>	 
 
   <body>
@@ -259,7 +296,7 @@
 	  <form class="form-inline">
 		<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>
 		<div class="input-append">
-		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px"; onclick="toggleEvent()">
+		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">
 SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 		</textarea>
 		<label>MBID:</label>
@@ -286,15 +323,17 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 			</select>
 	</div>
 	<div id="pageloader">
+		<form class="form-inline">
 		<span class="Centerer"></span>
 		<img class="Centered" src="./src/img/ajax-loader.gif" />
+		</form>
 	</div>
 	<div id="result">
 		<div id="fakeLoader">
 		</div>
 	</div>	
 	<div class="footer">
-		<p>simplebrainz.org, Music Technology Group, UPF, Barcelona</p>
+		<p>simplebrainz.org, UPF, Barcelona</p>
 	</div>
   </body>
 </html>

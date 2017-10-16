@@ -175,6 +175,8 @@ function newforceGraph (graph, config){
 			.attr('stroke','#ccc');
 	 
 	force.on("tick", function(){
+		nodes[0].x = config.width/2;
+		nodes[0].y = config.height/2;
 
 		edges.attr({"x1": function(d){return d.source.x;},
 					"y1": function(d){return d.source.y;},
