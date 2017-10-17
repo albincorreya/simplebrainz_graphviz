@@ -28,8 +28,7 @@
 
 			//global variables
 
-			var outputJSON;
-			var jsonLabel;
+			var mainGraph;
 			var endpoint = "http://localhost:8890/sparql";
 			var format = "application/sparql-results+json";
 
@@ -199,6 +198,14 @@
 			sel.appendChild(fragment);
 			}
 
+			function getfilterGraph(value){
+				console.log("main graph",mainGraph);
+				var nGraph = filterResponse(JSON.parse(mainGraph), value);
+				d3.select("#result").selectAll("*").remove();
+				newforceGraph(nGraph,config);
+			}
+
+
 
 			function xhrEntityName(entity, mbid){
 				var response;
@@ -255,6 +262,8 @@
 					console.log(document.getElementById("toggletick").checked, "loading style2");
 					var response = onclickQueryResponse();
 					var d3graph = outputParser(response);
+					console.log("First graph", d3graph);
+					mainGraph = JSON.stringify(d3graph);
 					var options = getFilterOptions(d3graph);
 					populateFilterOptions(options);
 					$('#pageloader').hide();
@@ -265,7 +274,8 @@
 					console.log(document.getElementById("toggletick").checked, "loading style1");
 					var sResponse = onclickSearch();
 					var sd3graph = outputParser(response);
-					console.log(sd3graph);
+					mainGraph = d3graph;
+					console.log("main out",sd3graph);
 					var soptions = getFilterOptions(sd3graph);
 					populateFilterOptions(soptions);
 					newforceGraph(sd3graph,config);
@@ -315,7 +325,7 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 	</div>
 	<div id="filtermodule">
 		<label>Filter by:</label>
-		<select id="filter" name="mysortlist">
+		<select id="filter" name="mysortlist" onmousedown="this.value"; onchange="getfilterGraph(this.value)">
 			<option value="None">None</option>
 			<!--
 				<option value="All">All</option>
