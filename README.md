@@ -34,7 +34,7 @@ d3 forcegraph format
 	], 
 	"links":[
 		{"source":0,"target":1,"value":1},
-		{"source":1,"target":3,"value":0}
+		{"source":1,"target":2,"value":0}
 	] 
 }
 ```
