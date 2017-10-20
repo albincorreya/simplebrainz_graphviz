@@ -13,9 +13,9 @@
 { "head": { "link": [], "vars": [] },
   "results": { "distinct": false, "ordered": true, "bindings": 
 		[
-	    	{ "s": { "type": "typed-literal", "datatype": "", "value": "" },
-			{ "p": { "type": "typed-literal", "datatype": "", "value": "" },
-			{ "o": { "type": "typed-literal", "datatype": "", "value": "" }
+	    	{ "s": { "type": "typed-literal", "datatype": "", "value": "" }},
+			{ "p": { "type": "typed-literal", "datatype": "", "value": "" }},
+			{ "o": { "type": "typed-literal", "datatype": "", "value": "" }}
 		] 
 	} 
 }
