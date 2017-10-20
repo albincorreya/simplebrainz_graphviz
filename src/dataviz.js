@@ -78,6 +78,22 @@ function outputParser(json){
 	return graph;
 }
 
+function filterResponse(inputGraph,value){
+	console.log("Input Graph",inputGraph);
+	var fGraph = inputGraph;
+	for(var i=0;i<fGraph.links.length;i++){
+		if(fGraph.links[i].type != value){
+			delete fGraph.links[i];
+			delete fGraph.nodes[i];
+		}
+	}
+	fNodes = fGraph.nodes.filter(function(n){ return n != undefined }); 
+	fLinks = fGraph.links.filter(function(n){ return n != undefined });
+	var outGraph = {"nodes":fNodes,"links":fLinks};
+	console.log(outGraph)
+	return outGraph;
+}	
+
 
 	
 //outputParser(parseJsonTest);
@@ -175,8 +191,8 @@ function newforceGraph (graph, config){
 			.attr('stroke','#ccc');
 	 
 	force.on("tick", function(){
-		nodes[0].x = config.width/2;
-		nodes[0].y = config.height/2;
+		//nodes[0].x = config.width/2;
+		//nodes[0].y = config.height/2;
 
 		edges.attr({"x1": function(d){return d.source.x;},
 					"y1": function(d){return d.source.y;},
