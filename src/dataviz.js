@@ -2,7 +2,7 @@
 
 // some utility functions
 function parseQuery(entity,mbid){
-	var eQuery = 'SELECT ?s ?p ?o WHERE {{<http://musicbrainz.org/'+entity+'/'+mbid+"> ?p ?o} UNION {?s <http://musicbrainz.org/"+entity+'/'+mbid+'> ?o} UNION {?s ?p <http://musicbrainz.org/'+entity+'/'+mbid+'>}}';
+	var eQuery = 'SELECT ?s ?p ?o WHERE {{<http://musicbrainz.org/'+entity+'/'+mbid+"> ?p ?o} UNION {?s <http://musicbrainz.org/"+entity+'/'+mbid+'> ?o} UNION {?s ?p <http://musicbrainz.org/'+entity+'/'+mbid+'>}} limit 60';
 	return eQuery;
 }
 
@@ -79,19 +79,47 @@ function outputParser(json){
 }
 
 function filterResponse(inputGraph,value){
+	var newObj = {"nodes":[],"links":[]};
 	console.log("Input Graph",inputGraph);
-	var fGraph = inputGraph;
-	for(var i=0;i<fGraph.links.length;i++){
-		if(fGraph.links[i].type != value){
-			delete fGraph.links[i];
-			delete fGraph.nodes[i];
-		}
+	var fGraph = $.extend(true, {}, inputGraph);
+	var newLinks = fGraph.links.filter(function linkFilter(nodes){
+		return nodes.type == value
+	});
+	var nidx = [];
+	for(var a=0;a<newLinks.length;a++){
+		console.log("as", newLinks[a].source, newLinks[a].target);
+		nidx.push(newLinks[a].source);
+		nidx.push(newLinks[a].target);
 	}
-	fNodes = fGraph.nodes.filter(function(n){ return n != undefined }); 
-	fLinks = fGraph.links.filter(function(n){ return n != undefined });
-	var outGraph = {"nodes":fNodes,"links":fLinks};
-	console.log(outGraph)
-	return outGraph;
+	//console.log("parsed links",newLinks, nidx);
+	var uniquenIdx = nidx.filter((v, i, a) => a.indexOf(v) === i);
+	//console.log("fd",uniquenIdx);
+	var newNodes = [];
+	for(var i=0;i<uniquenIdx.length;i++){
+		newNodes.push(fGraph.nodes[uniquenIdx[i]]);
+	}
+	console.log("newNodes",newNodes);
+	var j=1; 
+	for(var i=0;i<newLinks.length;i++){ 
+		if (newLinks[i].source == 0) {
+			console.log("target",newLinks[i].target); 
+			newLinks[i].target = j; 
+			console.log("new target",newLinks[i].target);
+		} else if (newLinks[i].source > 0){
+			newLinks[i].target = 0;
+			newLinks[i].source = j; 
+		} 
+		j++; 
+	}
+	if (newLinks[0].target == 0){
+		var b = newNodes[1];
+		newNodes[1] = newNodes[0];
+		newNodes[0] = b;
+	}
+	var filteredGraph = {};
+	filteredGraph.nodes = newNodes;
+	filteredGraph.links = newLinks;
+	return filteredGraph;
 }	
 
 
@@ -99,6 +127,15 @@ function filterResponse(inputGraph,value){
 //outputParser(parseJsonTest);
 
 function newforceGraph (graph, config){	
+
+	graph.links.forEach(function(link, index, list) {
+        if (typeof graph.nodes[link.source] === 'undefined') {
+            console.log('undefined source', link);
+        }
+        if (typeof graph.nodes[link.target] === 'undefined') {
+            console.log('undefined target', link);
+        }
+    });
 
 	var colors = d3.scale.category10();
 

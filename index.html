@@ -29,6 +29,7 @@
 			//global variables
 
 			var mainGraph;
+			var nGraph;
 			var endpoint = "http://localhost:8890/sparql";
 			var format = "application/sparql-results+json";
 
@@ -199,8 +200,9 @@
 			}
 
 			function getfilterGraph(value){
-				console.log("main graph",mainGraph);
-				var nGraph = filterResponse(JSON.parse(mainGraph), value);
+				console.log("main graph loded",mainGraph);
+				nGraph = filterResponse(mainGraph, value);
+				console.log("parsed graph", nGraph);
 				d3.select("#result").selectAll("*").remove();
 				newforceGraph(nGraph,config);
 			}
@@ -237,10 +239,13 @@
 				$.ajax({url: uri, mimeType: format, cache: false, 
 					async: false,
 					data: {format: 'json'}, 
-					error: function(){console.log("Bad request")},
+					error: function(){console.log("Bad request");
+						window.alert("Bad request... check your query");
+					},
 					type: "GET",
 					success: function(data){
 						console.log("Successful request");
+						window.alert("Successful request.. please wait until the d3 parsers are loaded.");
 						console.log(data);
 						response = data;
 					}
@@ -262,13 +267,14 @@
 					console.log(document.getElementById("toggletick").checked, "loading style2");
 					var response = onclickQueryResponse();
 					var d3graph = outputParser(response);
-					console.log("First graph", d3graph);
-					mainGraph = JSON.stringify(d3graph);
+					mainGraph = $.extend(true, {}, d3graph);
+					//console.log("First copy", mainGraph);
 					var options = getFilterOptions(d3graph);
 					populateFilterOptions(options);
 					$('#pageloader').hide();
 					//myForceGraph(d3graph,config);
 					newforceGraph(d3graph,config);
+					window.alert("Graph ready !")
 				}
 				else{
 					console.log(document.getElementById("toggletick").checked, "loading style1");
