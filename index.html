@@ -31,11 +31,12 @@
 			var mainGraph; 
 			//var nGraph;
 			var endpoint = "http://localhost:8890/sparql"; //specify the endpoint
+			//var endpoint = "http://elvis-mtg.s.upf.edu:8890/sparql"
 			var format = "application/sparql-results+json"; //respone format from the virtuoso service
 
 
 
-			//d3 configuration for force graph
+			//d3 svg configuration for force graph 
 			var config = {
 			"label": "name",
 			"radius": 25 || function(d) { return d.value ? scale(d.value) : 1 + d.label.length },
