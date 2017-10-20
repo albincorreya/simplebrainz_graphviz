@@ -2,7 +2,9 @@
 
 
 
+## Visualization example
 
+![alt text](https://user-images.githubusercontent.com/14850001/31806625-6a4bcb4e-b569-11e7-92d3-c86144aca561.png)
 
 ## Layout response examples
 
