@@ -30,19 +30,19 @@
 
 			var mainGraph; 
 			//var nGraph;
-			var endpoint = "http://localhost:8890/sparql";
-			var format = "application/sparql-results+json";
+			var endpoint = "http://localhost:8890/sparql"; //specify the endpoint
+			var format = "application/sparql-results+json"; //respone format from the virtuoso service
 
 
 
-			//d3 graph config file
+			//d3 configuration for force graph
 			var config = {
 			"label": "name",
 			"radius": 25 || function(d) { return d.value ? scale(d.value) : 1 + d.label.length },
 			"charge": -1000,
 			"distance": 200,
 			"width": 1250,
-			"height": 1300,
+			"height": 900,
 			"selector": "#result",
 			"gravity": .2,
 			"friction": .6,
@@ -259,9 +259,12 @@
 			    $( "#result" ).load(window.location.href + " #result" );
 			}
 
+			
+			// Onclick function for Query button. Makes a request and display json results as d3 forcegraph
 			function onclickGraph(){
 				$('#pageloader').show();
 				//updateDiv();
+				d3.select("#result").selectAll("*").remove();
 				if(document.getElementById("toggletick").checked ==false)
 				{
 					console.log(document.getElementById("toggletick").checked, "loading style2");
