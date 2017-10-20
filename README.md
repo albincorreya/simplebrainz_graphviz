@@ -35,7 +35,7 @@ d3 forcegraph format
 		{"mbid": "13", "uri": "http://musicbrainz.org/area/13", "type": "area", "name": "Australia"}
 	], 
 	"links":[
-		{"source":0,"target":1,"value":1,"type","based_near"},
+		{"source":0,"target":1,"value":1,"type":"based_near"},
 		{"source":1,"target":2,"value":0,"type":"_members"}
 	] 
 }
