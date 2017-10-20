@@ -18,13 +18,13 @@
 	} 
 }
 
-,,,
+```
 
 d3 forcegraph format
 
 ``` json
 {
-	"nodes":[], //nodes
-	"links":[] //edges
+	"nodes":[], 
+	"links":[] 
 }
-,,,
+```
