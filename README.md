@@ -8,6 +8,8 @@
 
  Virtuoso response format "application/sparql-results+json"
 
+
+``` json
 { "head": { "link": [], "vars": [] },
   "results": { "distinct": false, "ordered": true, "bindings": [
     { "s": { "type": "typed-literal", "datatype": "", "value": "" }
@@ -16,9 +18,13 @@
 	} 
 }
 
+,,,
 
 d3 forcegraph format
+
+``` json
 {
 	"nodes":[], //nodes
 	"links":[] //edges
 }
+,,,
