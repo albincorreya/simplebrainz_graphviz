@@ -1,38 +1,7 @@
 
-
-// some utility functions
-function parseQuery(entity,mbid){
-	var eQuery = 'SELECT ?s ?p ?o WHERE {{<http://musicbrainz.org/'+entity+'/'+mbid+"> ?p ?o} UNION {?s <http://musicbrainz.org/"+entity+'/'+mbid+'> ?o} UNION {?s ?p <http://musicbrainz.org/'+entity+'/'+mbid+'>}} limit 60';
-	return eQuery;
-}
-
-function parseInnerQuery(entity,mbid){
-	var iQuery = 'select ?o WHERE {{<http://musicbrainz.org/'+ entity + '/' + mbid + '> <http://www.w3.org/2000/01/rdf-schema#label> ?o} UNION {?s <http://www.w3.org/2000/01/rdf-schema#label> <http://musicbrainz.org/' + entity + '/' + mbid + '>}}';
-	return iQuery;
-}
-
-function parseMbid(str){
-	return /[^/]*$/.exec(str)[0];
-}
-
-function parseEntity(str){
-	return str.split('/')[3];
-}
-
-function delete_null_properties(test, recurse) {
-	for (var i in test) {
-		if (test[i] === null) {
-			delete test[i];
-		} else if (recurse && typeof test[i] === 'object') {
-			delete_null_properties(test[i], recurse);
-		}
-	}
-}
-
-
-
-
-// CUSTOM PARSER FUNCTIONS & D3.JS VIZ FOR SPARQL JSON RESULTS
+// CUSTOM PARSER FUNCTIONS & D3.JS VIZ FOR SPARQL JSON RESULTS 
+//-------------------------------------------------------------
+// Albin Correya - 2017
 
 
 // function to parse sparql-json results to d3 graph format (nodes & links) for simplebrainz entity-links usecase
@@ -78,6 +47,9 @@ function outputParser(json){
 	return graph;
 }
 
+
+
+// function to filter the mainGraph(already parsed object) according to filter parameters in the drop-down menu and returns as d3json format
 function filterResponse(inputGraph,value){
 	var newObj = {"nodes":[],"links":[]};
 	console.log("Input Graph",inputGraph);
@@ -124,7 +96,7 @@ function filterResponse(inputGraph,value){
 
 
 	
-//outputParser(parseJsonTest);
+// D3 Force Graph visualization functions
 
 function newforceGraph (graph, config){	
 
@@ -150,7 +122,7 @@ function newforceGraph (graph, config){
 		.linkDistance(config.distance)
 		.charge(config.charge)
 		//.theta(0.1)
-		.gravity(0.05)
+		//.gravity(0.05)
 		.start();
 
 	var edges = svg.selectAll("line")
@@ -268,6 +240,7 @@ function newforceGraph (graph, config){
 
 
 
+// back up of a d3 force graph viz (for testing)
 function myForceGraph (graph,config) {
 
 	var nodes = graph.nodes;
@@ -452,87 +425,46 @@ function myForceGraph (graph,config) {
 
 
 
+// some utility functions
 
+// sparql to retreive all the s,p,0 links attached to a specifc musicbrainz entity
+function parseQuery(entity,mbid){
+	var eQuery = 'SELECT ?s ?p ?o WHERE {{<http://musicbrainz.org/'+entity+'/'+mbid+"> ?p ?o} UNION {?s <http://musicbrainz.org/"+entity+'/'+mbid+'> ?o} UNION {?s ?p <http://musicbrainz.org/'+entity+'/'+mbid+'>}} limit 100';
+	return eQuery;
+}
 
+// sparql query for retrieving label by specifying entity and musicbrainz id
+function parseInnerQuery(entity,mbid){
+	var iQuery = 'select ?o WHERE {{<http://musicbrainz.org/'+ entity + '/' + mbid + '> <http://www.w3.org/2000/01/rdf-schema#label> ?o} UNION {?s <http://www.w3.org/2000/01/rdf-schema#label> <http://musicbrainz.org/' + entity + '/' + mbid + '>}}';
+	return iQuery;
+}
 
+// parse mbid from the uri
+function parseMbid(str){
+	return /[^/]*$/.exec(str)[0];
+}
 
-/*
+//parse entity string from uri
+function parseEntity(str){
+	return str.split('/')[3];
+}
 
+function delete_null_properties(test, recurse) {
+	for (var i in test) {
+		if (test[i] === null) {
+			delete test[i];
+		} else if (recurse && typeof test[i] === 'object') {
+			delete_null_properties(test[i], recurse);
+		}
+	}
+}
 
-
-function xhrEntityName(entity, mbid, callback){
-				//endpoint = "http://localhost:8890/sparql";
-				//var format = "application/sparql-results+json";
-				var query = parseInnerQuery(entity,mbid);
-				var url = endpoint + "?query=" + encodeURIComponent(query);
-				console.log(url);
-				d3.xhr(url, format, function(request) {
-					var json = request.responseText;
-					//if(!error){
-						//console.log("Successful request");}
-					//else{console.log("Bad request")}
-					callback(JSON.parse(json));
-				});
-				//return response.results.bindings[0].o.value
-			}
-
-
-
-
-
-var graph = outputParser(parseJsonTest);
-var nodes = graph.nodes;
-var links = graph.links;
-
-var svg = d3.select("body")
-.append("svg")
-.attr("width",config.width)
-.attr("height",config.width);
-
-var force = d3.layout.force()
-.size([config.width, config.height])
-.nodes(nodes)
-.links(links)
-.on('tick', tick)
-.linkDistance(100)
-.gravity(.15)
-.friction(.8)
-.linkStrength(1)
-.charge(-425)
-.chargeDistance(600)
-.start();
-
-var link = svg.selectAll('.link')
-.data(links)
-.enter().append('line')
-.attr('class', 'link');
-
-var node = svg.selectAll('.node')
-	.data(force.nodes())
-	.enter().append('circle')
-	.attr('class', 'node')
-	.attr('r', config.width * 0.01)
-
-function tick(e) {
-
-	node.attr('cx', function(d) { return d.x; })
-			.attr('cy', function(d) { return d.y; })
-			.call(force.drag);
-
-	link.attr('x1', function(d) { return d.source.x; })
-			.attr('y1', function(d) { return d.source.y; })
-			.attr('x2', function(d) { return d.target.x; })
-			.attr('y2', function(d) { return d.target.y; });
-};
-*/
-/*
-
-//select ?s ?p ?o WHERE {{<http://musicbrainz.org/release-group/c833f060-25a2-4fa8-9ae8-9f927e6142ed> ?p ?o} UNION {?s <http://musicbrainz.org/release-group/c833f060-25a2-4fa8-9ae8-9f927e6142ed> ?o} UNION {?s ?p <http://musicbrainz.org/release-group/c833f060-25a2-4fa8-9ae8-9f927e6142ed>}}
 
 /*
 
 Some sparql queries for future reference
 
+//select ?s ?p ?o WHERE {{<http://musicbrainz.org/release-group/c833f060-25a2-4fa8-9ae8-9f927e6142ed> ?p ?o} UNION {?s <http://musicbrainz.org/release-group/c833f060-25a2-4fa8-9ae8-9f927e6142ed> ?o} UNION {?s ?p <http://musicbrainz.org/release-group/c833f060-25a2-4fa8-9ae8-9f927e6142ed>}}
 
 get label name 
 
