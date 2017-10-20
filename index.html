@@ -201,10 +201,15 @@
 
 			function getfilterGraph(value){
 				console.log("main graph loded",mainGraph);
-				nGraph = filterResponse(mainGraph, value);
-				console.log("parsed graph", nGraph);
-				d3.select("#result").selectAll("*").remove();
-				newforceGraph(nGraph,config);
+				if(value == 'none'){
+					d3.select("#result").selectAll("*").remove();
+					newforceGraph(mainGraph,config);
+				} else {
+					nGraph = filterResponse(mainGraph, value);
+					console.log("parsed graph", nGraph);
+					d3.select("#result").selectAll("*").remove();
+					newforceGraph(nGraph,config);
+				}
 			}
 
 
@@ -316,7 +321,7 @@ SELECT * WHERE{ ?a ?b ?c} LIMIT 100
 	</form>
 	</div>
 	<div id="filtermodule">
-		<label>Filter by:</label>
+		<label> Filter by:</label>
 		<select id="filter" name="mysortlist" onmousedown="this.value"; onchange="getfilterGraph(this.value)">
 			<option value="None">None</option>
 			<!--

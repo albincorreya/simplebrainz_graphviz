@@ -5,6 +5,10 @@
   text-shadow: 1px .5px #2F4F4F
 }
 
+.body {
+  background-color: #778899;
+}
+
 
 
 #pageloader 
@@ -27,14 +31,16 @@
     vertical-align: middle;
 }
 
-
+/*
 #result {
-  background-color: white;
+  background-color: #EEE8AA;
 }
+*/
 
-
-.filtermodule {
-  vertical-align: right;
+#filtermodule {
+  float:left;
+  width:620px;
+  height:50px;
 }
 
 /* add footer-style*/
@@ -47,7 +53,6 @@
     color: white;
     text-align: center;
 }
-
 
 
 .node .type1 {
