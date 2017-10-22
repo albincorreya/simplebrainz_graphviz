@@ -431,6 +431,7 @@ function myForceGraph (graph,config) {
 function parseQuery(entity,mbid,limit){
 	var eQuery = 'SELECT ?s ?p ?o WHERE {{<http://musicbrainz.org/'+entity+'/'+mbid+"> ?p ?o} UNION {?s <http://musicbrainz.org/"+entity+'/'+mbid+'> ?o} UNION {?s ?p <http://musicbrainz.org/'+entity+'/'+mbid+'>}} limit ' + limit;
 	console.log(eQuery);
+	$("textarea#sparql").val(eQuery);
 	return eQuery;
 }
 
