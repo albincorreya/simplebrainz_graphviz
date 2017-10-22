@@ -1,8 +1,7 @@
-# smb_browser_front-end
+# Simplebrainz_sample_front-end-viz
 
 
-
-## Visualization example
+## Visualization examples
 
 
 D3-forcegraph viz for the artist [NIck Murphy](https://musicbrainz.org/artist/0fb267e2-7175-4537-a9f2-e835ecc81ff7)
