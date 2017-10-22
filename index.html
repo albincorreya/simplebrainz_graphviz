@@ -1,343 +1,340 @@
 <!DOCTYPE html>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<html>
-		<head>
-		<!--<link rel="stylesheet" type="text/css" href="index.css">-->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="./style.css">
-		<!--<title>simplebrainz.org</title>-->
-		<div id="simplebrainzhead" class="tabcontent">
-			<h1>Simplebrainz</h1>
-		</div>
-		</head>
-		<script src="https://d3js.org/d3.v3.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
-		<!--<script src="./src/d3sparql.js"></script>
-		<script src="./data/testjson.js"></script>-->
-		<script src="./src/dataviz.js"></script>>
-		<script>
-			window.onload = function(){
-				$('#filter').find('option').remove().end();
-				populateFilterOptions(['none']);
-				$('#pageloader').hide();
-				//document.getElementById('sparql').style.display = "none";
-			}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
 
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <title>simplebrainz.org</title>
+</head>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="./src/dataviz.js"></script>
+<script>
+    window.onload = function() {
+        $('#filter').find('option').remove().end();
+        populateFilterOptions(['none']);
+        $('#pageloader').hide();
+        //document.getElementById('sparql').style.display = "none";
+    }
 
-			//global variables
+    //global variables
 
-			var mainGraph; 
-			//var nGraph;
-			var endpoint = "http://localhost:8890/sparql"; //specify the endpoint
-			//var endpoint = "http://elvis-mtg.s.upf.edu:8890/sparql"
-			var format = "application/sparql-results+json"; //respone format from the virtuoso service
+    var mainGraph;
+    //var nGraph;
+    var endpoint = "http://localhost:8890/sparql"; //specify the endpoint
+    var format = "application/sparql-results+json"; //respone format from the virtuoso service
 
+    //d3 configuration for force graph
+    var config = {
+        "label": "name",
+        "radius": 25 || function(d) {
+            return d.value ? scale(d.value) : 1 + d.label.length
+        },
+        "charge": -1000,
+        "distance": 200,
+        "width": 1250,
+        "height": 900,
+        "selector": "#result",
+        "gravity": .2,
+        "friction": .6,
+        "ClusterPadding": 1
+    };
 
+    /*
+    			document.getElementById('toggletick').addEventListener('click',function(){
+    				if(document.getElementById("toggletick").checked ==false){
+    					document.getElementById('sparql').style.display = "none";
+    				}else if(document.getElementById("toggletick").checked ==true){
+    					document.getElementById("sparql").style.display = "width:280px";
+    				}
+    			});
+    */
 
-			//d3 svg configuration for force graph 
-			var config = {
-			"label": "name",
-			"radius": 25 || function(d) { return d.value ? scale(d.value) : 1 + d.label.length },
-			"charge": -1000,
-			"distance": 200,
-			"width": 1250,
-			"height": 900,
-			"selector": "#result",
-			"gravity": .2,
-			"friction": .6,
-			"ClusterPadding": 1
-			};
+    function formatUri() {
+        var mbid = d3.select("#mbid").property("value");
+        //var mbid = "83d91898-7763-47d7-b03b-b92132375c47";
+        var entity = d3.select("#entity").property("value");
+        //var entity = "artist";
+        return "http://musicbrainz.org/" + entity + "/" + mbid
+    }
 
+    function getRequestUrl(entity, mbid) {
+        var query = parseInnerQuery(entity, mbid);
+        var url = endpoint + "?query=" + encodeURIComponent(query);
+        return url
+    }
 
-/*
-			document.getElementById('toggletick').addEventListener('click',function(){
-				if(document.getElementById("toggletick").checked ==false){
-					document.getElementById('sparql').style.display = "none";
-				}else if(document.getElementById("toggletick").checked ==true){
-					document.getElementById("sparql").style.display = "width:280px";
-				}
-			});
-*/
+    function onclickSearch() {
+        var response;
+        var query = d3.select("#sparql").property("value");
+        //var format = "application/sparql-results+json";
+        if (query.length < 6) {
+            var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
+        }
+        /*
+        if(document.querySelector('.messageCheckbox:checked').value=='on'){
+        	var query=d3.select("#sparql").property("value");
+        	if(query.length<6 && toggle()==0){
+        		var query = "SELECT DISTINCT WHERE{ ?s ?p ?o} LIMIT 50";
+        		document.getElementById('myTextarea').value = query;
+        	}
+        }else{
+        	var query = parseQuery(d3.select("#entity").property("value"),d3.select("#mbid").property("value"));
+        }
+        */
+        var uri = endpoint + "?query=" + encodeURIComponent(query);
+        //var url = endpoint + '?' + querypart;
+        //var format = "application/json";
+        $.ajax({
+            url: uri,
+            mimeType: format,
+            cache: false,
+            async: false,
+            data: {
+                format: 'json'
+            },
+            error: function() {
+                console.log("Bad request")
+            },
+            type: "GET",
+            success: function(data) {
+                console.log("Successful request");
+                console.log(data);
+                response = data;
+            }
+        });
+        return response;
+    }
 
-			function formatUri(){
-			var mbid = d3.select("#mbid").property("value");
-			//var mbid = "83d91898-7763-47d7-b03b-b92132375c47";
-			var entity = d3.select("#entity").property("value");
-			//var entity = "artist";
-			return "http://musicbrainz.org/"+entity+"/"+mbid
-			}
+    //function sampleGraph(){d3sparql.forcegraph(outputJSON,config);}
 
+    function removeOptions() {
+        $('#filter').find('option').remove().end();
+    };
 
+    function getRelationships(json) {
+        var relArray = [];
+        relArray[0] = "None";
+        var myJSON = json.results.bindings;
+        var j = 1;
+        for (var i = 3; i < myJSON.length; i++) {
+            relArray[j] = parseMbid(myJSON[i].p.value);
+            j++;
+        }
 
-			function getRequestUrl(entity,mbid){
-				var query = parseInnerQuery(entity,mbid);
-				var url = endpoint + "?query=" + encodeURIComponent(query);
-				return url
-			}
+        function unique(list) {
+            var result = [];
+            $.each(list, function(i, e) {
+                if ($.inArray(e, result) == -1) result.push(e);
+            });
+            return result;
+        }
+        var outArray = unique(relArray).filter(function(element) {
+            return element !== undefined;
+        });
+        return outArray;
+    }
 
+    function toggleEvent() {
+        if (document.getElementById("toggletick").checked == false) {
+            document.getElementById('sparql').style.display = "none";
+        } else if (document.getElementById("toggletick").checked == true) {
+            document.getElementById("sparql").style.display = "width:280px";
+        }
+    }
 
-			function onclickSearch(){
-				var response;
-				//var endpoint ="http://localhost:8890/sparql";
-				//var query = "select ?s ?p ?o WHERE {{<http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_> ?p ?o} UNION {?s ?p <http://simplebrainz.org/song/b153e1a6-a1ee-4666-9deb-93369348bd4e#_>}}";
-				//var endpoint = "https://dbpedia.org/sparql";
-				var query = d3.select("#sparql").property("value");
-				//var format = "application/sparql-results+json";
-				if(query.length<6){
-					var query = "SELECT * WHERE{ ?s ?p ?o} LIMIT 50";
-				}
-				/*
-				if(document.querySelector('.messageCheckbox:checked').value=='on'){
-					var query=d3.select("#sparql").property("value");
-					if(query.length<6 && toggle()==0){
-						var query = "SELECT DISTINCT WHERE{ ?s ?p ?o} LIMIT 50";
-						document.getElementById('myTextarea').value = query;
-					}
-				}else{
-					var query = parseQuery(d3.select("#entity").property("value"),d3.select("#mbid").property("value"));
-				}
-				*/
-				var uri = endpoint + "?query=" + encodeURIComponent(query);
-				//var url = endpoint + '?' + querypart;
-				//var format = "application/json";
-				$.ajax({url: uri, mimeType: format, cache: false, 
-					async: false,
-					data: {format: 'json'}, 
-					error: function(){console.log("Bad request")},
-					type: "GET",
-					success: function(data){
-						console.log("Successful request");
-						console.log(data);
-						response = data;
-					}
-				});
-				return response;
-			}
+    function pageLoader() {
+        var img = document.createElement("IMG");
+        document.getElementById("pageloader").appendChild(img);
+        img.class = "Centered";
+        img.src = "./src/img/ajax-loader.gif";
+        $('#pageloader').show();
+    }
 
-			//function sampleGraph(){d3sparql.forcegraph(outputJSON,config);}
+    function getFilterOptions(d3graph) {
+        var links = d3graph.links;
+        var options = [];
+        options[0] = 'none';
+        var j = 1;
+        for (var i = 0; i < links.length; i++) {
+            options[j] = links[i].type;
+            j++
+        }
 
+        function unique(list) {
+            var result = [];
+            $.each(list, function(i, e) {
+                if ($.inArray(e, result) == -1) result.push(e);
+            });
+            return result;
+        }
+        return unique(options);
+    }
 
+    function populateFilterOptions(options) {
+        removeOptions();
+        var sel = document.getElementById('filter');
+        var fragment = document.createDocumentFragment();
+        options.forEach(function(options, index) {
+            var opt = document.createElement('option');
+            opt.innerHTML = options;
+            opt.value = options;
+            fragment.appendChild(opt);
+        });
+        sel.appendChild(fragment);
+    }
 
+    function getfilterGraph(value) {
+        //console.log("main graph loaded -> ",mainGraph);
+        if (value == 'none') {
+            d3.select("#result").selectAll("*").remove();
+            var r = filterResponse(mainGraph, value);
+            newforceGraph(r, consoleonfig);
+        } else {
+            nGraph = filterResponse(mainGraph, value);
+            //console.log("parsed graph", nGraph);
+            d3.select("#result").selectAll("*").remove();
+            newforceGraph(nGraph, config);
+        }
+    }
 
-			function removeOptions(){$('#filter').find('option').remove().end();};
+    function xhrEntityName(entity, mbid) {
+        var response;
+        var query = parseInnerQuery(entity, mbid);
+        var uri = endpoint + "?query=" + encodeURIComponent(query);
+        console.log(uri);
+        $.ajax({
+            url: uri,
+            mimeType: format,
+            cache: false,
+            async: false,
+            data: {
+                format: 'json'
+            },
+            error: function() {
+                console.log("Bad request")
+            },
+            type: "GET",
+            success: function(data) {
+                console.log("Successful request");
+                //console.log(data);
+                response = data;
+            }
+        });
+        console.log(response.results.bindings[0].o.value);
+        return response.results.bindings[0].o.value;
+    }
 
+    function onclickQueryResponse() {
+        var response;
+        var mbid = d3.select("#mbid").property("value");
+        var entity = d3.select("#entity").property("value");
+        var query = parseQuery(entity, mbid);
+        var uri = endpoint + "?query=" + encodeURIComponent(query);
+        $.ajax({
+            url: uri,
+            mimeType: format,
+            cache: false,
+            async: false,
+            data: {
+                format: 'json'
+            },
+            error: function() {
+                console.log("Bad request");
+                window.alert("Bad request... check your query");
+            },
+            type: "GET",
+            success: function(data) {
+                console.log("Successful request");
+                window.alert("Successful request.. please wait until the d3 parsers are loaded.");
+                console.log(data);
+                response = data;
+            }
+        });
+        return response;
+    }
 
+    function updateDiv() {
+        $("#result").load(window.location.href + " #result");
+    }
 
-			function getRelationships(json){
-				var relArray = [];
-				relArray[0] = "None";
-				var myJSON = json.results.bindings;
-				var j = 1;
-				for(var i=3; i<myJSON.length; i++){
-					relArray[j] = parseMbid(myJSON[i].p.value);
-					j++;
-				}
-				function unique(list) {
-					var result = [];
-					$.each(list, function(i, e) {
-					if ($.inArray(e, result) == -1) result.push(e);
-					});
-					return result;
-				}
-				var outArray = unique(relArray).filter(function( element ) {
-					return element !== undefined;
-				});
-				return outArray;
-			}
+    // Onclick function for Query button. Makes a request and display json results as d3 forcegraph
+    function onclickGraph() {
+        $('#pageloader').show();
+        //updateDiv();
+        d3.select("#result").selectAll("*").remove();
+        if (document.getElementById("toggletick").checked == false) {
+            console.log(document.getElementById("toggletick").checked, "loading style2");
+            var response = onclickQueryResponse();
+            var d3graph = outputParser(response);
+            mainGraph = $.extend(true, {}, d3graph);
+            //console.log("First copy", mainGraph);
+            var options = getFilterOptions(d3graph);
+            populateFilterOptions(options);
+            $('#pageloader').hide();
+            //myForceGraph(d3graph,config);
+            newforceGraph(d3graph, config);
+            window.alert("Graph ready...")
+        } else {
+            console.log(document.getElementById("toggletick").checked, "loading style1");
+            var sResponse = onclickSearch();
+            var sd3graph = outputParser(response);
+            mainGraph = $.extend(true, {}, sd3graph);
+            //console.log("main out",sd3graph);
+            var soptions = getFilterOptions(sd3graph);
+            populateFilterOptions(soptions);
+            newforceGraph(sd3graph, config);
+        }
+    }
+</script>
 
+<body>
+    <nav id="headernav">
+        <div id="simplebrainzhead" class="tabcontent">
+            <h1>Simplebrainz</h1>
+        </div>
+    </nav>
+    <div id="dropdown" style="margin: 10px">
+        <form class="form-inline">
+            <label for="test">SPARQL :
+                <input class="messageCheckbox" type="checkbox" id="toggletick" />
+            </label>
+            <div class="input-append">
+                <textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">
+SELECT * WHERE{ ?s ?p ?o} LIMIT 100
+                </textarea>
+                <label>MBID:</label>
+                <textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">0fb267e2-7175-4537-a9f2-e835ecc81ff7</textarea>
+                <label>Entity:</label>
+                <select id="entity" name="mydropdown">
+                    <option value="artist">Artist</option>
+                    <option value="release-group">Release-Group</option>
+                    <option value="recording">Recording</option>
+                    <option value="work">Work</option>
+                    <option value="area">Area</option>
+                </select>
+                <button class="btn btn-primary" type="button" onclick="onclickGraph();">Query</button>
+            </div>
+        </form>
+    </div>
+    <div id="filtermodule" style="margin: 6">
+            <label> Filter by:</label>
+        <select id="filter" name="mysortlist" onmousedown="this.value" ; onchange="getfilterGraph(this.value)">
+            <option value="None">None</option>
+        </select>
+    </div>
+    <div id="result">
+        <div id="pageloader">
+            <span class="Centerer"></span>
+            <img class="Centered" src="./src/img/ajax-loader.gif" />
+        </div>
+    </div>
+    <div class="footer">
+        <p>simplebrainz.org, MTG, UPF, Barcelona</p>
+    </div>
+</body>
 
-			function toggleEvent(){
-				if(document.getElementById("toggletick").checked ==false){
-					document.getElementById('sparql').style.display = "none";
-				}else if(document.getElementById("toggletick").checked ==true){
-					document.getElementById("sparql").style.display = "width:280px";
-				}
-			}
-
-
-			function pageLoader(){
-				var img = document.createElement("IMG");
-				document.getElementById("pageloader").appendChild(img);
-				img.class = "Centered";
-				img.src = "./src/img/ajax-loader.gif";
-				$('#pageloader').show();
-			}
-
-
-
-			function getFilterOptions(d3graph){
-				var links = d3graph.links;
-				var options = [];
-				options[0] = 'none';
-				var j =1;	
-				for (var i=0; i<links.length; i++){
-					options[j] = links[i].type;
-					j++ 
-				}
-				function unique(list) {
-					var result = [];
-					$.each(list, function(i, e) {
-					if ($.inArray(e, result) == -1) result.push(e);
-					});
-					return result;
-				}
-				return unique(options);
-			}
-
-
-			function populateFilterOptions(options){ 
-				removeOptions(); 
-				var sel = document.getElementById('filter');
-				var fragment = document.createDocumentFragment();
-				options.forEach(function(options, index) {
-				var opt = document.createElement('option');
-				opt.innerHTML = options;
-				opt.value = options;
-				fragment.appendChild(opt);
-			});
-			sel.appendChild(fragment);
-			}
-
-			function getfilterGraph(value){
-				console.log("main graph loded",mainGraph);
-				if(value == 'none'){
-					d3.select("#result").selectAll("*").remove();
-					newforceGraph(mainGraph,config);
-				} else {
-					nGraph = filterResponse(mainGraph, value);
-					console.log("parsed graph", nGraph);
-					d3.select("#result").selectAll("*").remove();
-					newforceGraph(nGraph,config);
-				}
-			}
-
-
-
-			function xhrEntityName(entity, mbid){
-				var response;
-				var query = parseInnerQuery(entity,mbid);
-				var uri = endpoint + "?query=" + encodeURIComponent(query);
-				console.log(uri);
-				$.ajax({url: uri, mimeType: format, cache: false,
-					async: false,
-					data: {format: 'json'}, 
-					error: function(){console.log("Bad request")},
-					type: "GET",
-					success: function(data){
-						console.log("Successful request");
-						//console.log(data);
-						response = data;
-					}
-				});
-				console.log(response.results.bindings[0].o.value);
-				return response.results.bindings[0].o.value;
-			}
-
-
-			function onclickQueryResponse(){
-				var response;
-				var mbid = d3.select("#mbid").property("value");
-				var entity = d3.select("#entity").property("value");
-				var query = parseQuery(entity,mbid);
-				var uri = endpoint + "?query=" + encodeURIComponent(query);
-				$.ajax({url: uri, mimeType: format, cache: false, 
-					async: false,
-					data: {format: 'json'}, 
-					error: function(){console.log("Bad request");
-						window.alert("Bad request... check your query");
-					},
-					type: "GET",
-					success: function(data){
-						console.log("Successful request");
-						window.alert("Successful request.. please wait until the d3 parsers are loaded.");
-						console.log(data);
-						response = data;
-					}
-				});
-				return response;
-			}
-
-
-			function updateDiv()
-			{ 
-			    $( "#result" ).load(window.location.href + " #result" );
-			}
-
-			
-			// Onclick function for Query button. Makes a request and display json results as d3 forcegraph
-			function onclickGraph(){
-				$('#pageloader').show();
-				//updateDiv();
-				d3.select("#result").selectAll("*").remove();
-				if(document.getElementById("toggletick").checked ==false)
-				{
-					console.log(document.getElementById("toggletick").checked, "loading style2");
-					var response = onclickQueryResponse();
-					var d3graph = outputParser(response);
-					mainGraph = $.extend(true, {}, d3graph);
-					//console.log("First copy", mainGraph);
-					var options = getFilterOptions(d3graph);
-					populateFilterOptions(options);
-					$('#pageloader').hide();
-					//myForceGraph(d3graph,config);
-					newforceGraph(d3graph,config);
-					window.alert("Graph ready...")
-				}
-				else{
-					console.log(document.getElementById("toggletick").checked, "loading style1");
-					var sResponse = onclickSearch();
-					var sd3graph = outputParser(response);
-					mainGraph = $.extend(true, {}, sd3graph);
-					//console.log("main out",sd3graph);
-					var soptions = getFilterOptions(sd3graph);
-					populateFilterOptions(soptions);
-					newforceGraph(sd3graph,config);
-				}
-			}
-
-		</script>	 
-
-  <body>
-	<div id="dropdown" style="margin: 10px">
-	  <form class="form-inline">
-		<label for="test">SPARQL : <input class="messageCheckbox" type="checkbox" id="toggletick" /></label>
-		<div class="input-append">
-		<textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">
-SELECT * WHERE{ ?a ?b ?c} LIMIT 100
-		</textarea>
-		<label>MBID:</label>
-		<textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">0fb267e2-7175-4537-a9f2-e835ecc81ff7</textarea>
-		<label>Entity:</label>
-		<select id="entity" name="mydropdown">
-			<option value="artist">Artist</option>
-			<option value="release-group">Release-Group</option>
-			<option value="recording">Recording</option>
-			<option value="work">Work</option>
-			<option value="area">Area</option>
-		</select>
-	<button class="btn btn-primary" type="button" onclick="onclickGraph();">Query</button>
-	</div>
-	</form>
-	</div>
-	<div id="filtermodule">
-		<label> Filter by:</label>
-		<select id="filter" name="mysortlist" onmousedown="this.value"; onchange="getfilterGraph(this.value)">
-			<option value="None">None</option>
-			<!--
-				<option value="All">All</option>
-			-->
-			</select>
-	</div>
-	<div id="result">
-		<div id="pageloader">
-		<span class="Centerer"></span>
-		<img class="Centered" src="./src/img/ajax-loader.gif" />
-		</div>
-	</div>	
-	<div class="footer">
-		<p>simplebrainz.org, UPF, Barcelona</p>
-	</div>
-  </body>
 </html>
