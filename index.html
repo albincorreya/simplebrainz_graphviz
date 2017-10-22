@@ -232,7 +232,8 @@
         var response;
         var mbid = d3.select("#mbid").property("value");
         var entity = d3.select("#entity").property("value");
-        var query = parseQuery(entity, mbid);
+        var limit = d3.select("#limit").property("value");
+        var query = parseQuery(entity, mbid, limit);
         var uri = endpoint + "?query=" + encodeURIComponent(query);
         $.ajax({
             url: uri,
@@ -269,15 +270,19 @@
         if (document.getElementById("toggletick").checked == false) {
             console.log(document.getElementById("toggletick").checked, "loading style2");
             var response = onclickQueryResponse();
-            var d3graph = outputParser(response);
-            mainGraph = $.extend(true, {}, d3graph);
-            //console.log("First copy", mainGraph);
-            var options = getFilterOptions(d3graph);
-            populateFilterOptions(options);
-            $('#pageloader').hide();
-            //myForceGraph(d3graph,config);
-            newforceGraph(d3graph, config);
-            window.alert("Graph ready...")
+            if (response.results.bindings.length == 0){
+                window.alert("Sorry couldn't find any results for this query.., please check the fields.");
+            }else {
+                var d3graph = outputParser(response);
+                mainGraph = $.extend(true, {}, d3graph);
+                //console.log("First copy", mainGraph);
+                var options = getFilterOptions(d3graph);
+                populateFilterOptions(options);
+                $('#pageloader').hide();
+                //myForceGraph(d3graph,config);
+                newforceGraph(d3graph, config);
+                window.alert("Graph ready...")
+            }
         } else {
             console.log(document.getElementById("toggletick").checked, "loading style1");
             var sResponse = onclickSearch();
@@ -303,8 +308,7 @@
                 <input class="messageCheckbox" type="checkbox" id="toggletick" />
             </label>
             <div class="input-append">
-                <textarea id="sparql" class="span9" rows="3" cols="100" style="width:280px;">
-SELECT * WHERE{ ?s ?p ?o} LIMIT 100
+                <textarea id="sparql" class="span9" rows="3" cols="100" style="width:250px;">
                 </textarea>
                 <label>MBID:</label>
                 <textarea id="mbid" class="span9" rows="1" cols="300" style="width:300px;">0fb267e2-7175-4537-a9f2-e835ecc81ff7</textarea>
@@ -312,10 +316,14 @@ SELECT * WHERE{ ?s ?p ?o} LIMIT 100
                 <select id="entity" name="mydropdown">
                     <option value="artist">Artist</option>
                     <option value="release-group">Release-Group</option>
+                    <option value="release">Release</option>
                     <option value="recording">Recording</option>
                     <option value="work">Work</option>
+                    <option value="label">Label</option>
                     <option value="area">Area</option>
                 </select>
+                <label>Limit:</label>
+                <textarea id="limit" class="span9" rows="1" style="width: 50px">100</textarea>
                 <button class="btn btn-primary" type="button" onclick="onclickGraph();">Query</button>
             </div>
         </form>

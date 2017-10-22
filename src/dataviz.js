@@ -109,7 +109,7 @@ function newforceGraph (graph, config){
         }
     });
 
-	var colors = d3.scale.category20c();
+	var colors = d3.scale.category10();
 
 	var svg = d3.select(config.selector).append("svg")
 		.attr("width",config.width)
@@ -428,8 +428,9 @@ function myForceGraph (graph,config) {
 // some utility functions
 
 // sparql to retreive all the s,p,0 links attached to a specifc musicbrainz entity
-function parseQuery(entity,mbid){
-	var eQuery = 'SELECT ?s ?p ?o WHERE {{<http://musicbrainz.org/'+entity+'/'+mbid+"> ?p ?o} UNION {?s <http://musicbrainz.org/"+entity+'/'+mbid+'> ?o} UNION {?s ?p <http://musicbrainz.org/'+entity+'/'+mbid+'>}} limit 100';
+function parseQuery(entity,mbid,limit){
+	var eQuery = 'SELECT ?s ?p ?o WHERE {{<http://musicbrainz.org/'+entity+'/'+mbid+"> ?p ?o} UNION {?s <http://musicbrainz.org/"+entity+'/'+mbid+'> ?o} UNION {?s ?p <http://musicbrainz.org/'+entity+'/'+mbid+'>}} limit ' + limit;
+	console.log(eQuery);
 	return eQuery;
 }
 
