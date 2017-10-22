@@ -109,7 +109,7 @@ function newforceGraph (graph, config){
         }
     });
 
-	var colors = d3.scale.category10();
+	var colors = d3.scale.category20();
 
 	var svg = d3.select(config.selector).append("svg")
 		.attr("width",config.width)
