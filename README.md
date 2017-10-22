@@ -1,5 +1,6 @@
-# Simplebrainz_sample_front-end-viz
+# Simplebrainz_sample_front-end-viz 
 
+(under development)
 
 ## Visualization examples
 
