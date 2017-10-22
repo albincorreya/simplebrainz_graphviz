@@ -4,9 +4,14 @@
 
 ## Visualization example
 
-D3-forcegraph viz for the artist [NIck Murphy](https://musicbrainz.org/artist/0fb267e2-7175-4537-a9f2-e835ecc81ff7) from Simplebrainz
+
+D3-forcegraph viz for the artist [NIck Murphy](https://musicbrainz.org/artist/0fb267e2-7175-4537-a9f2-e835ecc81ff7)
 
 ![alt text](https://user-images.githubusercontent.com/14850001/31806625-6a4bcb4e-b569-11e7-92d3-c86144aca561.png)
+
+D3-forcegraph viz for the release-group [Division Bell](https://beta.musicbrainz.org/release-group/90878b63-f639-3c8b-aefb-190bdf3d1790) by Pink Floyd
+
+![alt text](https://user-images.githubusercontent.com/14850001/31863215-001b5260-b74b-11e7-95ea-ed7aca80dd17.png)
 
 ## Response-layout examples
 
