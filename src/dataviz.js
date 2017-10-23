@@ -51,47 +51,53 @@ function outputParser(json){
 
 // function to filter the mainGraph(already parsed object) according to filter parameters in the drop-down menu and returns as d3json format
 function filterResponse(inputGraph,value){
-	var newObj = {"nodes":[],"links":[]};
-	console.log("Input Graph",inputGraph);
-	var fGraph = $.extend(true, {}, inputGraph);
-	var newLinks = fGraph.links.filter(function linkFilter(nodes){
-		return nodes.type == value
-	});
-	var nidx = [];
-	for(var a=0;a<newLinks.length;a++){
-		console.log("as", newLinks[a].source, newLinks[a].target);
-		nidx.push(newLinks[a].source);
-		nidx.push(newLinks[a].target);
+	if (value=='none'){
+		var fGraph = $.extend(true, {}, inputGraph);
+		return fGraph
+	} 
+	else {
+		var newObj = {"nodes":[],"links":[]};
+		console.log("Input Graph",inputGraph);
+		var fGraph = $.extend(true, {}, inputGraph);
+		var newLinks = fGraph.links.filter(function linkFilter(nodes){
+			return nodes.type == value
+		});
+		var nidx = [];
+		for(var a=0;a<newLinks.length;a++){
+			console.log("as", newLinks[a].source, newLinks[a].target);
+			nidx.push(newLinks[a].source);
+			nidx.push(newLinks[a].target);
+		}
+		//console.log("parsed links",newLinks, nidx);
+		var uniquenIdx = nidx.filter((v, i, a) => a.indexOf(v) === i);
+		//console.log("fd",uniquenIdx);
+		var newNodes = [];
+		for(var i=0;i<uniquenIdx.length;i++){
+			newNodes.push(fGraph.nodes[uniquenIdx[i]]);
+		}
+		console.log("newNodes",newNodes);
+		var j=1; 
+		for(var i=0;i<newLinks.length;i++){ 
+			if (newLinks[i].source == 0) {
+				console.log("target",newLinks[i].target); 
+				newLinks[i].target = j; 
+				console.log("new target",newLinks[i].target);
+			} else if (newLinks[i].source > 0){
+				newLinks[i].target = 0;
+				newLinks[i].source = j; 
+			} 
+			j++; 
+		}
+		if (newLinks[0].target == 0){
+			var b = newNodes[1];
+			newNodes[1] = newNodes[0];
+			newNodes[0] = b;
+		}
+		var filteredGraph = {};
+		filteredGraph.nodes = newNodes;
+		filteredGraph.links = newLinks;
+		return filteredGraph;
 	}
-	//console.log("parsed links",newLinks, nidx);
-	var uniquenIdx = nidx.filter((v, i, a) => a.indexOf(v) === i);
-	//console.log("fd",uniquenIdx);
-	var newNodes = [];
-	for(var i=0;i<uniquenIdx.length;i++){
-		newNodes.push(fGraph.nodes[uniquenIdx[i]]);
-	}
-	console.log("newNodes",newNodes);
-	var j=1; 
-	for(var i=0;i<newLinks.length;i++){ 
-		if (newLinks[i].source == 0) {
-			console.log("target",newLinks[i].target); 
-			newLinks[i].target = j; 
-			console.log("new target",newLinks[i].target);
-		} else if (newLinks[i].source > 0){
-			newLinks[i].target = 0;
-			newLinks[i].source = j; 
-		} 
-		j++; 
-	}
-	if (newLinks[0].target == 0){
-		var b = newNodes[1];
-		newNodes[1] = newNodes[0];
-		newNodes[0] = b;
-	}
-	var filteredGraph = {};
-	filteredGraph.nodes = newNodes;
-	filteredGraph.links = newLinks;
-	return filteredGraph;
 }	
 
 
