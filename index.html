@@ -192,7 +192,7 @@
         if (value == 'none') {
             d3.select("#result").selectAll("*").remove();
             var r = filterResponse(mainGraph, value);
-            newforceGraph(r, consoleonfig);
+            newforceGraph(r, config);
         } else {
             nGraph = filterResponse(mainGraph, value);
             //console.log("parsed graph", nGraph);
