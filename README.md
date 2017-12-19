@@ -1,6 +1,8 @@
-# Simplebrainz_sample_front-end-viz 
+# simplebrainz_demo_front-end-viz 
 
 (under development)
+
+[Simplebrainz](https://github.com/andrebola/simplebrainz) is a music knowledge base created from [musicbrainz](https://musicbrainz.org/). This is a demo project of visualizing sparql query response from the simplebrainz REST service.
 
 ## Visualization examples
 
